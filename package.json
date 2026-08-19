@@ -1,0 +1,9 @@
+{
+  "name": "the-case-room",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Consulting case interview prep, portfolio builder, and application tracker.",
+  "scripts": {
+    "dev": "netlify dev"
+  }
+}

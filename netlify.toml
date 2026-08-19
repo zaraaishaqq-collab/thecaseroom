@@ -1,0 +1,11 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# The frontend calls /api/claude — Netlify Functions actually live at
+# /.netlify/functions/claude, so this redirect bridges the two without
+# needing to change any frontend code.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
