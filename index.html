@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Case Room — Consulting Interview Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-dark: #10141c;        /* war room background */
+    --ink-dark-2: #171d29;      /* panel background on dark */
+    --manila: #e7dcbd;          /* case folder */
+    --manila-2: #efe6ce;        /* lighter folder card */
+    --manila-line: #c9b98c;     /* folder rule lines */
+    --paper-ink: #201a10;       /* text on manila */
+    --cream-ink: #ece7db;       /* text on dark */
+    --cream-ink-dim: #a7adbb;
+    --stamp-red: #a83a2b;       /* rubber stamp ink */
+    --stamp-red-dim: #7c2c20;
+    --cleared-teal: #3f6f62;    /* cleared / success stamp */
+    --cleared-teal-dim: #2c4f45;
+    --amber-tab: #c98a2b;       /* folder tab accent */
+    --line-hair: rgba(231,220,189,0.14);
+    --line-hair-dark: rgba(16,20,28,0.12);
+    --radius: 3px;
+    --font-display: 'Space Mono', monospace;
+    --font-body: 'Source Serif 4', Georgia, serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--ink-dark);
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(201,138,43,0.06), transparent 40%),
+      radial-gradient(circle at 90% 10%, rgba(168,58,43,0.06), transparent 45%);
+    color: var(--cream-ink);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{color:inherit;}
+  button{font-family: var(--font-mono); cursor:pointer;}
+  ::selection{background: var(--amber-tab); color: var(--paper-ink);}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px clamp(16px,4vw,48px) 0;
+    max-width: 1180px; margin: 0 auto;
+  }
+  .brand{
+    display:flex; align-items:baseline; gap:10px;
+  }
+  .brand-mark{
+    font-family: var(--font-display); font-weight:700; font-size:13px;
+    letter-spacing:0.14em; color: var(--paper-ink);
+    background: var(--amber-tab);
+    padding: 4px 8px; border-radius: 2px;
+    transform: rotate(-2deg);
+    display:inline-block;
+  }
+  .brand-name{
+    font-family: var(--font-display); font-size: 19px; font-weight:700;
+    letter-spacing: 0.01em; color: var(--cream-ink);
+  }
+  .brand-sub{
+    font-family: var(--font-mono); font-size:11px; letter-spacing:0.08em;
+    color: #8b93a3; text-transform:uppercase;
+  }
+  .stat-pill{
+    font-family: var(--font-mono); font-size:12px; color:#8b93a3;
+    display:flex; gap:18px;
+  }
+  .stat-pill b{color:var(--cream-ink); font-weight:600;}
+
+  /* ---------- Folder tab nav ---------- */
+  .tabnav{
+    max-width: 1180px; margin: 26px auto 0;
+    padding: 0 clamp(16px,4vw,48px);
+    display:flex; gap:6px; align-items:flex-end;
+  }
+  .tab-btn{
+    font-family: var(--font-mono); font-size:12.5px; letter-spacing:0.04em;
+    background: var(--ink-dark-2); color:#8b93a3;
+    border: 1px solid var(--line-hair);
+    border-bottom: none;
+    padding: 10px 18px 12px;
+    border-radius: 8px 8px 0 0;
+    position:relative; top:1px;
+    transition: color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .tab-btn:hover{ color: var(--cream-ink); transform: translateY(-2px); }
+  .tab-btn.active{
+    background: var(--manila); color: var(--paper-ink);
+    border-color: var(--manila);
+    font-weight:600;
+  }
+
+  /* ---------- Folder body ---------- */
+  .folder{
+    max-width: 1180px; margin: 0 auto 80px;
+    padding: clamp(20px,4vw,42px) clamp(16px,4vw,48px) 60px;
+    background: var(--manila);
+    background-image: linear-gradient(var(--manila-line) 1px, transparent 1px);
+    background-size: 100% 34px;
+    background-position: 0 4px;
+    color: var(--paper-ink);
+    border-radius: 0 8px 8px 8px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.55), 0 2px 0 var(--manila-line);
+    min-height: 60vh;
+    position:relative;
+  }
+  .folder::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:52px;
+    background: repeating-linear-gradient(to bottom, transparent 0 22px, var(--manila-line) 22px 23px);
+    opacity:.55;
+    pointer-events:none;
+  }
+  .view{ display:none; animation: fadeIn .25s ease; }
+  .view.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  .eyebrow{
+    font-family: var(--font-mono); font-size:11px; letter-spacing:0.14em;
+    text-transform:uppercase; color: var(--stamp-red);
+    margin: 0 0 6px;
+  }
+  h1.page-title{
+    font-family: var(--font-display); font-size: clamp(24px,3.4vw,34px);
+    margin: 0 0 6px; font-weight:700; letter-spacing:-0.01em;
+  }
+  .page-desc{ margin:0 0 28px; max-width:640px; color:#3a2f1c; line-height:1.55; font-size:15px;}
+
+  /* stamp graphic */
+  .stamp{
+    position:absolute; top:26px; right:34px;
+    font-family: var(--font-display); font-weight:700; font-size:13px;
+    letter-spacing:0.12em; color: var(--stamp-red);
+    border: 3px solid var(--stamp-red);
+    padding: 6px 12px; border-radius:4px;
+    transform: rotate(6deg);
+    opacity:.85;
+    mix-blend-mode: multiply;
+  }
+  .stamp.cleared{ color: var(--cleared-teal); border-color: var(--cleared-teal); }
+
+  /* ---------- generic card ---------- */
+  .card{
+    background: var(--manila-2);
+    border: 1px solid var(--manila-line);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .grid{ display:grid; gap:16px; }
+  .grid-2{ grid-template-columns: repeat(2,1fr); }
+  .grid-3{ grid-template-columns: repeat(3,1fr); }
+  .grid-4{ grid-template-columns: repeat(4,1fr); }
+  @media (max-width:820px){ .grid-2,.grid-3,.grid-4{ grid-template-columns: 1fr; } }
+
+  label.field-label{
+    display:block; font-family: var(--font-mono); font-size:11px;
+    letter-spacing:0.08em; text-transform:uppercase; color:#5c4e2f;
+    margin-bottom:6px;
+  }
+  select, textarea, input[type=text]{
+    width:100%; font-family: var(--font-body); font-size:14.5px;
+    background: #fbf8ef; border: 1px solid var(--manila-line);
+    border-radius: 3px; padding: 10px 12px; color: var(--paper-ink);
+    resize: vertical;
+  }
+  select{ font-family: var(--font-mono); font-size:13px; }
+  textarea:focus, select:focus, input:focus{
+    outline: 2px solid var(--amber-tab); outline-offset:1px;
+  }
+
+  .btn{
+    font-family: var(--font-mono); font-size:12.5px; letter-spacing:0.05em;
+    padding: 11px 20px; border-radius: 3px; border:none;
+    display:inline-flex; align-items:center; gap:8px;
+    transition: transform .1s ease, box-shadow .1s ease;
+  }
+  .btn:active{ transform: translateY(1px); }
+  .btn-primary{ background: var(--stamp-red); color:#fbf3ea; font-weight:600; }
+  .btn-primary:hover{ background: var(--stamp-red-dim); }
+  .btn-dark{ background: var(--ink-dark); color: var(--cream-ink); font-weight:600; }
+  .btn-dark:hover{ background:#232b3a; }
+  .btn-outline{ background:transparent; color: var(--paper-ink); border: 1px solid var(--paper-ink); }
+  .btn-outline:hover{ background: rgba(16,20,28,0.06); }
+  .btn-teal{ background: var(--cleared-teal); color:#f2f7f4; font-weight:600; }
+  .btn-teal:hover{ background: var(--cleared-teal-dim); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .badge{
+    font-family: var(--font-mono); font-size:10.5px; letter-spacing:0.06em;
+    text-transform:uppercase; padding:3px 8px; border-radius:2px;
+    display:inline-block;
+  }
+  .badge-red{ background: rgba(168,58,43,0.14); color: var(--stamp-red); }
+  .badge-teal{ background: rgba(63,111,98,0.16); color: var(--cleared-teal); }
+  .badge-amber{ background: rgba(201,138,43,0.18); color:#8a5c15; }
+
+  hr.rule{ border:none; border-top:1px solid var(--manila-line); margin: 24px 0; }
+
+  /* loading */
+  .loader{
+    display:flex; align-items:center; gap:12px; font-family: var(--font-mono);
+    font-size:13px; color:#5c4e2f; padding: 30px 0;
+  }
+  .loader .dot{
+    width:8px; height:8px; border-radius:50%; background: var(--stamp-red);
+    animation: pulse 1s infinite ease-in-out;
+  }
+  .loader .dot:nth-child(2){ animation-delay:.15s; }
+  .loader .dot:nth-child(3){ animation-delay:.3s; }
+  @keyframes pulse{ 0%,100%{opacity:.25; transform:scale(.8);} 50%{opacity:1; transform:scale(1.1);} }
+
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-thumb{ background:#374156; border-radius:6px; }
+
+  /* Dashboard */
+  .kpi{
+    background: var(--manila-2); border:1px solid var(--manila-line); border-radius:var(--radius);
+    padding:18px 20px;
+  }
+  .kpi .num{ font-family: var(--font-display); font-size:30px; font-weight:700; }
+  .kpi .lbl{ font-family: var(--font-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5c4e2f; margin-top:4px; }
+
+  /* generator form */
+  .chip-group{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-family: var(--font-mono); font-size:12px; padding:7px 13px;
+    border:1px solid var(--manila-line); border-radius:20px; background:#fbf8ef;
+    color:#5c4e2f;
+  }
+  .chip.selected{ background: var(--stamp-red); color:#fbf3ea; border-color: var(--stamp-red); }
+
+  /* practice room */
+  .case-header{
+    background: var(--ink-dark); color: var(--cream-ink);
+    border-radius: 6px; padding: 20px 24px; margin-bottom:20px;
+    position:relative; overflow:hidden;
+  }
+  .case-header::after{
+    content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+    background: radial-gradient(circle, rgba(201,138,43,0.18), transparent 70%);
+  }
+  .timer{
+    font-family: var(--font-display); font-size:26px; font-weight:700;
+    color: var(--amber-tab);
+  }
+  .step-tabs{ display:flex; gap:4px; flex-wrap:wrap; margin-bottom:16px; }
+  .step-tab{
+    font-family: var(--font-mono); font-size:11.5px; padding:8px 14px;
+    border-radius:20px; border:1px solid var(--manila-line); background:transparent;
+    color:#5c4e2f;
+  }
+  .step-tab.active{ background: var(--paper-ink); color: var(--manila); border-color: var(--paper-ink); }
+  .step-tab.done::before{ content:"✓ "; color: var(--cleared-teal); }
+
+  .exhibit{
+    background:#fbf8ef; border:1px solid var(--manila-line); border-radius:3px;
+    padding:14px 16px; margin-bottom:10px;
+  }
+  .exhibit table{ width:100%; border-collapse:collapse; font-family:var(--font-mono); font-size:12.5px; margin-top:8px;}
+  .exhibit th, .exhibit td{ text-align:left; padding:6px 8px; border-bottom:1px solid var(--manila-line); }
+  .exhibit th{ color:#5c4e2f; font-weight:600; }
+
+  /* portfolio */
+  .case-row{
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+    background: var(--manila-2); border:1px solid var(--manila-line); border-radius:3px;
+    padding:14px 18px; margin-bottom:10px;
+  }
+  .case-row:hover{ border-color: var(--stamp-red); }
+  .score-ring{
+    width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:700; font-size:13px;
+    border: 3px solid var(--cleared-teal); color: var(--cleared-teal); flex:none;
+  }
+  .score-ring.mid{ border-color: var(--amber-tab); color:#8a5c15; }
+  .score-ring.low{ border-color: var(--stamp-red); color: var(--stamp-red); }
+
+  .empty-state{
+    text-align:center; padding: 60px 20px; color:#5c4e2f;
+  }
+  .empty-state .glyph{ font-size:38px; margin-bottom:10px; }
+
+  footer.credit{
+    max-width:1180px; margin:0 auto 40px; padding: 0 clamp(16px,4vw,48px);
+    font-family: var(--font-mono); font-size:11px; color:#4a5061; text-align:center;
+  }
+
+  /* ---------- Mock interview chat ---------- */
+  .chat-window{
+    background:#fbf8ef; border:1px solid var(--manila-line); border-radius:4px;
+    padding: 18px; height: 460px; overflow-y:auto; display:flex; flex-direction:column; gap:14px;
+  }
+  .chat-msg{ max-width:78%; display:flex; flex-direction:column; gap:4px; }
+  .chat-msg.interviewer{ align-self:flex-start; }
+  .chat-msg.candidate{ align-self:flex-end; align-items:flex-end; }
+  .chat-role{
+    font-family: var(--font-mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:#8a7a4e;
+  }
+  .chat-bubble{
+    padding:10px 14px; border-radius:10px; font-size:13.5px; line-height:1.5; white-space:pre-wrap;
+  }
+  .chat-msg.interviewer .chat-bubble{ background: var(--ink-dark); color: var(--cream-ink); border-bottom-left-radius:2px; }
+  .chat-msg.candidate .chat-bubble{ background: var(--stamp-red); color:#fbf3ea; border-bottom-right-radius:2px; }
+  .chat-input-row{ display:flex; gap:10px; margin-top:12px; align-items:flex-end; }
+  .chat-input-row textarea{ flex:1; }
+  .typing-indicator{ font-family: var(--font-mono); font-size:11.5px; color:#8a7a4e; padding: 2px 4px; }
+
+  /* ---------- Print / PDF export ---------- */
+  #printPortfolio{ display:none; }
+  @media print{
+    body{ background:#fff !important; }
+    .topbar, .tabnav, .folder, footer.credit{ display:none !important; }
+    #printPortfolio{ display:block !important; background:#fff; color:#111; padding:0; max-width:100%; }
+  }
+
+  /* ---------- Application tracker ---------- */
+  .tracker-card{
+    background: var(--manila-2); border:1px solid var(--manila-line); border-radius: var(--radius);
+    padding:16px 18px; margin-bottom:10px;
+  }
+  .tracker-top{ display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; align-items:flex-start; }
+  .tracker-meta{ font-family:var(--font-mono); font-size:11px; color:#5c4e2f; margin-top:4px; }
+  .status-select{
+    font-family:var(--font-mono); font-size:11.5px; padding:6px 8px; border-radius:3px;
+    border:1px solid var(--manila-line); background:#fbf8ef;
+  }
+  .region-filter-bar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .status-dot{ width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+
+  @media (max-width:700px){
+    .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; }
+    .stamp{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-mark">CF-01</span>
+    <div>
+      <div class="brand-name">The Case Room</div>
+      <div class="brand-sub">Consulting Interview Prep &amp; Portfolio</div>
+    </div>
+  </div>
+  <div class="stat-pill" id="topStats">
+    <span><b id="topCasesDone">0</b> cases logged</span>
+    <span><b id="topStreak">0</b> day streak</span>
+  </div>
+</div>
+
+<nav class="tabnav" id="tabNav">
+  <button class="tab-btn active" data-view="dashboard">01 — Dashboard</button>
+  <button class="tab-btn" data-view="generate">02 — Generate Case</button>
+  <button class="tab-btn" data-view="practice">03 — Practice Room</button>
+  <button class="tab-btn" data-view="portfolio">04 — Portfolio</button>
+  <button class="tab-btn" data-view="mockinterview">05 — Mock Interview</button>
+  <button class="tab-btn" data-view="tracker">06 — Application Tracker</button>
+  <button class="tab-btn" data-view="library">07 — Framework Library</button>
+</nav>
+
+<div class="folder">
+
+  <!-- ============ DASHBOARD ============ -->
+  <section class="view active" id="view-dashboard"></section>
+
+  <!-- ============ GENERATE ============ -->
+  <section class="view" id="view-generate"></section>
+
+  <!-- ============ PRACTICE ============ -->
+  <section class="view" id="view-practice"></section>
+
+  <!-- ============ PORTFOLIO ============ -->
+  <section class="view" id="view-portfolio"></section>
+
+  <!-- ============ MOCK INTERVIEW ============ -->
+  <section class="view" id="view-mockinterview"></section>
+
+  <!-- ============ APPLICATION TRACKER ============ -->
+  <section class="view" id="view-tracker"></section>
+
+  <!-- ============ LIBRARY ============ -->
+  <section class="view" id="view-library"></section>
+
+</div>
+
+<footer class="credit">CASE FILE SYSTEM — for interview practice purposes. Not affiliated with any consulting firm.</footer>
+
+<div id="printPortfolio"></div>
+
+
+<script>
+/* =========================================================================
+   THE CASE ROOM — app state
+   ========================================================================= */
+const STEP_ORDER = ['clarify','structure','exhibits','synthesis'];
+const STEP_LABELS = {
+  clarify: 'Clarify', structure: 'Structure', exhibits: 'Exhibits & Math', synthesis: 'Synthesis'
+};
+
+const state = {
+  view: 'dashboard',
+  currentCase: null,          // full case object returned by generator
+  currentStep: 'clarify',
+  showClarifyAnswers: false,
+  work: { clarify: '', structure: '', exhibits: '', synthesis: '' },
+  timerSeconds: 0,
+  timerInterval: null,
+  timerRunning: false,
+  generating: false,
+  genError: null,
+  grading: false,
+  gradeError: null,
+  feedback: null,
+  savedThisCase: false,
+  portfolio: { cases: [], streak: 0, lastActiveDate: null },
+  portfolioExpanded: null,
+  genForm: { industry: 'Consumer Goods', caseType: 'Profitability', difficulty: 'MBA-level', focus: '' },
+  libraryOpen: {},
+  mock: {
+    active: false, case: null, transcript: [], sending: false, ended: false,
+    feedback: null, grading: false, gradeError: null, savedThisCase: false, genError: null, generating: false
+  },
+  mockForm: { industry: 'Consumer Goods', caseType: 'Profitability', difficulty: 'MBA-level', focus: '' },
+  tracker: { regionFilter: 'All', tierFilter: 'All', search: '', tracked: {} }
+};
+
+const CASE_TYPES = ['Profitability', 'Market Entry', 'M&A / Due Diligence', 'Growth Strategy', 'Pricing Strategy', 'Operations & Cost', 'Market Sizing', 'New Product Launch'];
+const DIFFICULTIES = ['Entry-level', 'MBA-level', 'Advanced / Partner-style'];
+const INDUSTRIES = ['Consumer Goods', 'Technology', 'Healthcare & Pharma', 'Financial Services', 'Retail & E-commerce', 'Energy & Utilities', 'Private Equity', 'Nonprofit & Social Impact', 'Telecom', 'Manufacturing & Industrials', 'Airlines & Travel', 'Media & Entertainment'];
+
+/* =========================================================================
+   STORAGE HELPERS  (browser localStorage — per-device, no backend needed)
+   ========================================================================= */
+async function storGet(key){
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+async function storSet(key, val){
+  try{
+    localStorage.setItem(key, JSON.stringify(val));
+    return true;
+  }catch(e){ console.error('storage set failed', e); return false; }
+}
+async function storDelete(key){
+  try{ localStorage.removeItem(key); }catch(e){ /* ignore */ }
+}
+
+async function loadPortfolio(){
+  const p = await storGet('portfolio');
+  state.portfolio = p || { cases: [], streak: 0, lastActiveDate: null };
+}
+async function savePortfolio(){
+  await storSet('portfolio', state.portfolio);
+}
+async function saveCaseDetail(id, detail){
+  return await storSet('case-detail:' + id, detail);
+}
+async function loadCaseDetail(id){
+  return await storGet('case-detail:' + id);
+}
+
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
+function bumpStreak(){
+  const today = todayStr();
+  if (state.portfolio.lastActiveDate === today) return;
+  const y = new Date(); y.setDate(y.getDate()-1);
+  const yesterday = y.toISOString().slice(0,10);
+  if (state.portfolio.lastActiveDate === yesterday){
+    state.portfolio.streak = (state.portfolio.streak||0) + 1;
+  } else {
+    state.portfolio.streak = 1;
+  }
+  state.portfolio.lastActiveDate = today;
+}
+
+/* =========================================================================
+   CLAUDE API HELPERS
+   ========================================================================= */
+function stripFences(text){
+  return text.replace(/```json/gi,'').replace(/```/g,'').trim();
+}
+
+let sitePasscode = localStorage.getItem('site-passcode') || '';
+
+async function claudeFetch(body){
+  const doFetch = () => fetch('/api/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-site-passcode': sitePasscode || '' },
+    body: JSON.stringify(body)
+  });
+  let response = await doFetch();
+  if (response.status === 401){
+    const entered = window.prompt('This site is passcode-protected. Enter the access passcode:');
+    if (entered){
+      sitePasscode = entered;
+      localStorage.setItem('site-passcode', entered);
+      response = await doFetch();
+    }
+  }
+  if (!response.ok){
+    let detail = '';
+    try{
+      const errBody = await response.json();
+      detail = errBody.error && errBody.error.message ? errBody.error.message
+        : (typeof errBody.error === 'string' ? errBody.error : (errBody.detail || JSON.stringify(errBody)));
+    }catch(e){ /* response wasn't JSON — leave detail blank */ }
+    throw new Error('API request failed (' + response.status + ')' + (detail ? ': ' + detail : ''));
+  }
+  return await response.json();
+}
+
+async function callClaudeJSON(systemPrompt, userPrompt, maxTokens){
+  const data = await claudeFetch({
+    max_tokens: maxTokens || 1800,
+    system: systemPrompt,
+    messages: [ { role: 'user', content: userPrompt } ]
+  });
+  const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+  const cleaned = stripFences(textBlocks);
+  return JSON.parse(cleaned);
+}
+
+async function generateCaseFromAPI(form){
+  const sys = `You are a former MBB consulting interviewer writing realistic case interview prompts for students preparing to break into consulting. You always respond with ONLY valid JSON matching the exact schema requested — no preamble, no markdown fences, no commentary. Numbers in exhibits must be internally consistent and support a clear, calculable insight.`;
+  const user = `Write one original case interview prompt with these parameters:
+Industry: ${form.industry}
+Case type: ${form.caseType}
+Difficulty: ${form.difficulty}
+${form.focus ? 'Additional focus requested by the student: ' + form.focus : ''}
+
+Respond with ONLY this JSON object (no other text):
+{
+  "title": "short punchy case title, 4-8 words",
+  "industry": "${form.industry}",
+  "caseType": "${form.caseType}",
+  "difficulty": "${form.difficulty}",
+  "clientContext": "2-4 sentences setting up the client and situation, written as an interviewer would open a live case",
+  "question": "one clear, specific case question the candidate must answer",
+  "clarifyingQA": [ { "q": "a clarifying question a strong candidate might ask", "a": "the interviewer's realistic answer" } ]  // exactly 6 pairs, covering scope, market, client goals, timeline, constraints, and definitions
+  ,
+  "exhibits": [ { "title": "exhibit title", "description": "one sentence on what it shows", "columns": ["col1","col2","..."], "rows": [["value","value","..."], ["...", "..."]] } ]  // 1 to 3 exhibits, each with real internally-consistent numeric data, 3-6 rows
+  ,
+  "idealFramework": "3-5 sentence description of a strong MECE framework/issue tree for this case",
+  "keyMath": "2-4 sentence description of the core calculation a candidate should perform, with the correct numeric answer worked in",
+  "recommendation": "3-4 sentence model recommendation a top candidate would land on, framed answer-first"
+}`;
+  return await callClaudeJSON(sys, user, 2200);
+}
+
+async function gradeSubmissionFromAPI(caseObj, work){
+  const sys = `You are a rigorous, encouraging former MBB case interviewer grading a student's written case interview work. You always respond with ONLY valid JSON matching the exact schema requested — no preamble, no markdown fences, no commentary. Be specific and reference the student's actual words. Be honest about weaknesses, not just encouraging.`;
+  const user = `CASE FILE:
+Title: ${caseObj.title}
+Client context: ${caseObj.clientContext}
+Question: ${caseObj.question}
+Ideal framework (reference, not shown to student): ${caseObj.idealFramework}
+Key math (reference): ${caseObj.keyMath}
+Model recommendation (reference): ${caseObj.recommendation}
+Exhibits given: ${JSON.stringify(caseObj.exhibits)}
+
+STUDENT'S WRITTEN WORK:
+Clarifying questions the student would ask: ${work.clarify || '(none written)'}
+Student's framework / issue tree: ${work.structure || '(none written)'}
+Student's exhibit analysis & math: ${work.exhibits || '(none written)'}
+Student's synthesis & recommendation: ${work.synthesis || '(none written)'}
+
+Grade this submission. Respond with ONLY this JSON object:
+{
+  "overallScore": <integer 1-10>,
+  "structureScore": <integer 1-10, MECE-ness and completeness of framework>,
+  "mathScore": <integer 1-10, correctness and clarity of quantitative work>,
+  "synthesisScore": <integer 1-10, answer-first communication and business judgment>,
+  "strengths": [ "specific strength referencing the student's actual work" ],  // 3-4 items
+  "improvements": [ "specific, actionable improvement" ],  // 3-4 items
+  "modelComparison": "3-4 sentences comparing the student's framework/approach to the ideal framework, noting what they had that matched and what they missed",
+  "summary": "2-3 sentence overall verdict, direct and specific, written to the student as 'you'"
+}`;
+  return await callClaudeJSON(sys, user, 1600);
+}
+
+async function callClaudeText(systemPrompt, messages, maxTokens){
+  const data = await claudeFetch({
+    max_tokens: maxTokens || 500,
+    system: systemPrompt,
+    messages: messages
+  });
+  return (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n').trim();
+}
+
+function mockInterviewSystemPrompt(caseObj){
+  return `You are a professional, personable case interviewer at a top consulting firm, conducting a LIVE case interview with a candidate who is preparing for consulting recruiting. Stay in character as the interviewer for the entire conversation.
+
+This is the confidential case file only you can see:
+Title: ${caseObj.title}
+Client context: ${caseObj.clientContext}
+Question: ${caseObj.question}
+Clarifying Q&A the client has pre-approved: ${JSON.stringify(caseObj.clarifyingQA)}
+Exhibits available (only share one when the candidate asks for data/exhibits relevant to it, and present it as a clean plain-text table): ${JSON.stringify(caseObj.exhibits)}
+Ideal framework (do NOT reveal, use only to judge if candidate is on track): ${caseObj.idealFramework}
+Key math and correct answer (do NOT reveal until candidate has attempted the math): ${caseObj.keyMath}
+Model recommendation (do NOT reveal, ask the candidate to reach their own): ${caseObj.recommendation}
+
+Rules:
+- Keep every reply short and conversational, 2-5 sentences, like a real spoken interview — never lecture or dump the whole case file at once.
+- Only answer clarifying questions that map to the pre-approved Q&A list; for anything else, give a brief reasonable answer consistent with the case.
+- Only share exhibit data when the candidate specifically asks for data, numbers, or an exhibit — then paste the relevant table as plain text.
+- Push the candidate to structure before diving into numbers. If they jump straight to math, gently redirect them to lay out a framework first.
+- If the candidate is stuck for a while, offer one small nudge, not the answer.
+- Near the end, prompt them for a final recommendation if they haven't given one ("What would you tell the CEO?").
+- Never reveal the ideal framework, key math answer, or model recommendation directly — let the candidate arrive at their own conclusions.`;
+}
+
+async function getInterviewerReply(caseObj, transcript){
+  const sys = mockInterviewSystemPrompt(caseObj);
+  const messages = transcript.map(m => ({ role: m.role === 'interviewer' ? 'assistant' : 'user', content: m.content }));
+  return await callClaudeText(sys, messages, 400);
+}
+
+async function gradeMockInterviewFromAPI(caseObj, transcript){
+  const sys = `You are a rigorous, encouraging former MBB case interviewer grading a transcript of a live mock case interview. You always respond with ONLY valid JSON matching the exact schema requested — no preamble, no markdown fences, no commentary. Be specific and reference the candidate's actual words from the transcript. Be honest about weaknesses, not just encouraging.`;
+  const transcriptText = transcript.map(m => `${m.role === 'interviewer' ? 'INTERVIEWER' : 'CANDIDATE'}: ${m.content}`).join('\n\n');
+  const user = `CASE FILE:
+Title: ${caseObj.title}
+Client context: ${caseObj.clientContext}
+Question: ${caseObj.question}
+Ideal framework (reference, not shown to candidate): ${caseObj.idealFramework}
+Key math (reference): ${caseObj.keyMath}
+Model recommendation (reference): ${caseObj.recommendation}
+
+FULL INTERVIEW TRANSCRIPT:
+${transcriptText}
+
+Grade the candidate's performance across this transcript. Respond with ONLY this JSON object:
+{
+  "overallScore": <integer 1-10>,
+  "structureScore": <integer 1-10, MECE-ness and completeness of framework as it emerged in the conversation>,
+  "mathScore": <integer 1-10, correctness and clarity of any quantitative work in the conversation>,
+  "synthesisScore": <integer 1-10, answer-first communication and business judgment in the final recommendation>,
+  "strengths": [ "specific strength referencing something the candidate actually said" ],  // 3-4 items
+  "improvements": [ "specific, actionable improvement" ],  // 3-4 items
+  "modelComparison": "3-4 sentences comparing the candidate's approach in the conversation to the ideal framework, noting what matched and what they missed",
+  "summary": "2-3 sentence overall verdict, direct and specific, written to the candidate as 'you'"
+}`;
+  return await callClaudeJSON(sys, user, 1600);
+}
+
+function fmtTime(sec){
+  const m = Math.floor(sec/60), s = sec%60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
+}
+function avgScore(){
+  const cs = state.portfolio.cases;
+  if (!cs.length) return 0;
+  return Math.round((cs.reduce((a,c)=>a+c.overallScore,0)/cs.length)*10)/10;
+}
+function totalTime(){
+  return state.portfolio.cases.reduce((a,c)=>a+(c.timeSpentSec||0),0);
+}
+function scoreClass(n){
+  if (n >= 8) return '';
+  if (n >= 5) return 'mid';
+  return 'low';
+}
+
+function renderDashboard(){
+  const el = document.getElementById('view-dashboard');
+  const cases = state.portfolio.cases;
+  const typeCounts = {};
+  cases.forEach(c => { typeCounts[c.caseType] = (typeCounts[c.caseType]||0)+1; });
+  const typeRows = Object.keys(typeCounts).sort((a,b)=>typeCounts[b]-typeCounts[a])
+    .map(t => `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="width:140px;font-family:var(--font-mono);font-size:11.5px;color:#5c4e2f;">${t}</div>
+        <div style="flex:1;background:#e2d6ae;border-radius:3px;height:8px;overflow:hidden;">
+          <div style="width:${Math.min(100, typeCounts[t]/Math.max(1,cases.length)*100*2)}%;background:var(--stamp-red);height:100%;"></div>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:11.5px;width:18px;text-align:right;">${typeCounts[t]}</div>
+      </div>`).join('');
+
+  const recent = cases.slice().sort((a,b)=> new Date(b.dateCompleted) - new Date(a.dateCompleted)).slice(0,5);
+  const recentRows = recent.map(c => `
+    <div class="case-row" onclick="goToPortfolioCase('${c.id}')">
+      <div class="score-ring ${scoreClass(c.overallScore)}">${c.overallScore}</div>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:14.5px;">${escapeHtml(c.title)}</div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:#5c4e2f;margin-top:3px;">
+          ${escapeHtml(c.industry)} · ${escapeHtml(c.caseType)} · ${fmtDate(c.dateCompleted)}
+        </div>
+      </div>
+      <span class="badge badge-amber">${escapeHtml(c.difficulty)}</span>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div class="eyebrow">Case File — Overview</div>
+    <h1 class="page-title">Your Prep Dashboard</h1>
+    <p class="page-desc">Track how many cases you've drilled, where your scores are trending, and which case types still need reps before you walk into first rounds.</p>
+
+    <div class="grid grid-4" style="margin-bottom:26px;">
+      <div class="kpi"><div class="num">${cases.length}</div><div class="lbl">Cases completed</div></div>
+      <div class="kpi"><div class="num">${avgScore() || '—'}</div><div class="lbl">Avg. interviewer score</div></div>
+      <div class="kpi"><div class="num">${fmtTime(totalTime())}</div><div class="lbl">Total practice time</div></div>
+      <div class="kpi"><div class="num">${state.portfolio.streak||0}🔥</div><div class="lbl">Day streak</div></div>
+    </div>
+
+    ${cases.length === 0 ? `
+      <div class="empty-state card">
+        <div class="glyph">🗂️</div>
+        <div style="font-weight:600;margin-bottom:6px;">No cases in the file yet</div>
+        <div style="margin-bottom:18px;max-width:420px;margin-left:auto;margin-right:auto;">Generate your first custom case and start building the portfolio you'll bring to recruiting conversations.</div>
+        <button class="btn btn-primary" onclick="switchView('generate')">Draft your first case →</button>
+      </div>
+    ` : `
+      <div class="grid grid-2" style="align-items:start;">
+        <div class="card">
+          <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#5c4e2f;margin-bottom:14px;">Case type coverage</div>
+          ${typeRows || '<div style="color:#5c4e2f;font-size:13px;">Not enough data yet.</div>'}
+        </div>
+        <div class="card">
+          <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#5c4e2f;margin-bottom:14px;">Recent activity</div>
+          ${recentRows}
+        </div>
+      </div>
+      <div style="margin-top:24px;">
+        <button class="btn btn-primary" onclick="switchView('generate')">+ Draft a new case</button>
+        <button class="btn btn-outline" onclick="switchView('portfolio')" style="margin-left:10px;">View full portfolio</button>
+      </div>
+    `}
+  `;
+}
+
+function goToPortfolioCase(id){
+  state.portfolioExpanded = id;
+  switchView('portfolio');
+}
+
+function escapeHtml(str){
+  if (str == null) return '';
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* =========================================================================
+   RENDER: GENERATE
+   ========================================================================= */
+function renderGenerate(){
+  const el = document.getElementById('view-generate');
+  const f = state.genForm;
+
+  const industryOptions = INDUSTRIES.map(i => `<option value="${i}" ${f.industry===i?'selected':''}>${i}</option>`).join('');
+  const typeChips = CASE_TYPES.map(t => `<button type="button" class="chip ${f.caseType===t?'selected':''}" onclick="setGenField('caseType','${t.replace(/'/g,"\\'")}')">${t}</button>`).join('');
+  const diffChips = DIFFICULTIES.map(d => `<button type="button" class="chip ${f.difficulty===d?'selected':''}" onclick="setGenField('difficulty','${d.replace(/'/g,"\\'")}')">${d}</button>`).join('');
+
+  el.innerHTML = `
+    <div class="eyebrow">Case File — Intake</div>
+    <h1 class="page-title">Draft a New Case</h1>
+    <p class="page-desc">Set the parameters below. Each case is generated fresh — client situation, clarifying answers, real exhibit data, and a grading rubric behind the scenes.</p>
+
+    ${state.genError ? `<div class="card" style="border-color:var(--stamp-red);color:var(--stamp-red);margin-bottom:18px;">Couldn't draft the case: ${escapeHtml(state.genError)}. <button class="btn btn-outline" style="margin-left:8px;padding:4px 10px;" onclick="doGenerate()">Retry</button></div>` : ''}
+
+    <div class="card" style="margin-bottom:18px;">
+      <label class="field-label">Industry</label>
+      <select id="industrySelect" onchange="setGenField('industry', this.value)">${industryOptions}</select>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <label class="field-label">Case type</label>
+      <div class="chip-group">${typeChips}</div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <label class="field-label">Difficulty</label>
+      <div class="chip-group">${diffChips}</div>
+    </div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <label class="field-label">Optional focus (sub-industry, theme, a company type — anything)</label>
+      <input type="text" id="focusInput" placeholder="e.g. airline ancillary revenue, or a DTC skincare brand entering retail" value="${escapeHtml(f.focus)}" oninput="state.genForm.focus=this.value" />
+    </div>
+
+    ${state.generating ? `
+      <div class="loader"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Drafting the case file — pulling exhibits from the data room…</div>
+    ` : `
+      <button class="btn btn-primary" onclick="doGenerate()">Draft the case file →</button>
+    `}
+  `;
+}
+
+function setGenField(key, val){
+  state.genForm[key] = val;
+  renderGenerate();
+}
+
+async function doGenerate(){
+  state.generating = true;
+  state.genError = null;
+  renderGenerate();
+  try{
+    const caseObj = await generateCaseFromAPI(state.genForm);
+    caseObj.id = 'case_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+    caseObj.dateCreated = new Date().toISOString();
+    state.currentCase = caseObj;
+    state.currentStep = 'clarify';
+    state.showClarifyAnswers = false;
+    state.work = { clarify:'', structure:'', exhibits:'', synthesis:'' };
+    state.feedback = null;
+    state.gradeError = null;
+    state.savedThisCase = false;
+    state.timerSeconds = 0;
+    stopTimer();
+    startTimer();
+    state.generating = false;
+    switchView('practice');
+  }catch(e){
+    console.error(e);
+    state.generating = false;
+    state.genError = (e && e.message) ? e.message : 'unknown error';
+    renderGenerate();
+  }
+}
+
+/* =========================================================================
+   TIMER
+   ========================================================================= */
+function startTimer(){
+  if (state.timerInterval) return;
+  state.timerRunning = true;
+  state.timerInterval = setInterval(() => {
+    state.timerSeconds++;
+    document.querySelectorAll('.timerNum').forEach(elx => elx.textContent = fmtTime(state.timerSeconds));
+  }, 1000);
+}
+function stopTimer(){
+  state.timerRunning = false;
+  if (state.timerInterval){ clearInterval(state.timerInterval); state.timerInterval = null; }
+}
+function toggleTimer(){
+  if (state.timerRunning) stopTimer(); else startTimer();
+  if (state.view === 'mockinterview') renderMockInterview(); else renderPractice();
+}
+
+/* =========================================================================
+   RENDER: PRACTICE ROOM
+   ========================================================================= */
+function renderPractice(){
+  const el = document.getElementById('view-practice');
+  const c = state.currentCase;
+
+  if (!c){
+    el.innerHTML = `
+      <div class="eyebrow">Case File — Practice Room</div>
+      <h1 class="page-title">Practice Room</h1>
+      <div class="empty-state card">
+        <div class="glyph">📋</div>
+        <div style="font-weight:600;margin-bottom:6px;">No case loaded</div>
+        <div style="margin-bottom:18px;">Draft a case first and it'll open here automatically.</div>
+        <button class="btn btn-primary" onclick="switchView('generate')">Draft a case →</button>
+      </div>`;
+    return;
+  }
+
+  const stepTabsHtml = STEP_ORDER.map(s => `
+    <button class="step-tab ${state.currentStep===s?'active':''} ${state.work[s] && state.work[s].trim() ? 'done':''}"
+      onclick="setStep('${s}')">${STEP_LABELS[s]}</button>
+  `).join('');
+
+  let stepBody = '';
+  if (state.currentStep === 'clarify'){
+    stepBody = `
+      <label class="field-label">Questions you'd ask the interviewer before structuring</label>
+      <textarea rows="6" placeholder="What would you want to know before you start? (e.g. client goals, timeline, definition of terms, market scope...)" oninput="state.work.clarify=this.value">${escapeHtml(state.work.clarify)}</textarea>
+      <div style="margin-top:14px;">
+        ${state.showClarifyAnswers ? `
+          <div class="exhibit">
+            <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#5c4e2f;margin-bottom:10px;">Interviewer's answers</div>
+            ${c.clarifyingQA.map(qa => `<div style="margin-bottom:10px;"><div style="font-weight:600;font-size:13.5px;">Q: ${escapeHtml(qa.q)}</div><div style="font-size:13.5px;color:#3a2f1c;">A: ${escapeHtml(qa.a)}</div></div>`).join('')}
+          </div>
+        ` : `<button class="btn btn-outline" onclick="revealClarify()">Reveal interviewer's answers</button>`}
+      </div>
+    `;
+  } else if (state.currentStep === 'structure'){
+    stepBody = `
+      <div class="card" style="margin-bottom:14px;background:#f6f0dc;">
+        <div style="font-weight:600;font-size:13.5px;margin-bottom:4px;">Client context</div>
+        <div style="font-size:13.5px;">${escapeHtml(c.clientContext)}</div>
+        <div style="font-weight:600;font-size:13.5px;margin:10px 0 4px;">Question</div>
+        <div style="font-size:13.5px;">${escapeHtml(c.question)}</div>
+      </div>
+      <label class="field-label">Your framework / issue tree</label>
+      <textarea rows="8" placeholder="Lay out your MECE buckets and sub-branches. Think in terms of what would actually drive the answer." oninput="state.work.structure=this.value">${escapeHtml(state.work.structure)}</textarea>
+    `;
+  } else if (state.currentStep === 'exhibits'){
+    stepBody = `
+      ${c.exhibits.map(ex => `
+        <div class="exhibit">
+          <div style="font-weight:600;font-size:13.5px;">${escapeHtml(ex.title)}</div>
+          <div style="font-size:12.5px;color:#5c4e2f;margin-bottom:4px;">${escapeHtml(ex.description)}</div>
+          <table>
+            <thead><tr>${ex.columns.map(col=>`<th>${escapeHtml(col)}</th>`).join('')}</tr></thead>
+            <tbody>${ex.rows.map(row => `<tr>${row.map(cell=>`<td>${escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+      `).join('')}
+      <label class="field-label" style="margin-top:10px;">Your math &amp; exhibit analysis</label>
+      <textarea rows="7" placeholder="Show your work. State assumptions, do the calculation, and note what the numbers tell you." oninput="state.work.exhibits=this.value">${escapeHtml(state.work.exhibits)}</textarea>
+    `;
+  } else if (state.currentStep === 'synthesis'){
+    stepBody = `
+      <label class="field-label">Recommendation &amp; key message</label>
+      <p style="font-size:12.5px;color:#5c4e2f;margin-top:-2px;">Lead with your answer (Pyramid Principle), then back it with your top 2-3 reasons and a risk or next step.</p>
+      <textarea rows="8" placeholder="Based on the analysis, I recommend..." oninput="state.work.synthesis=this.value">${escapeHtml(state.work.synthesis)}</textarea>
+    `;
+  }
+
+  const stepIdx = STEP_ORDER.indexOf(state.currentStep);
+  const isLast = stepIdx === STEP_ORDER.length - 1;
+
+  let feedbackHtml = '';
+  if (state.gradeError){
+    feedbackHtml = `<div class="card" style="border-color:var(--stamp-red);color:var(--stamp-red);margin-top:18px;">Couldn't grade this submission: ${escapeHtml(state.gradeError)}. <button class="btn btn-outline" style="margin-left:8px;padding:4px 10px;" onclick="doGrade()">Retry</button></div>`;
+  }
+  if (state.grading){
+    feedbackHtml = `<div class="loader" style="margin-top:10px;"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Interviewer is reviewing your case notes…</div>`;
+  }
+  if (state.feedback){
+    const fb = state.feedback;
+    feedbackHtml = `
+      <hr class="rule"/>
+      <div style="position:relative;">
+        <div class="stamp ${fb.overallScore>=7?'cleared':''}" style="position:static;display:inline-block;transform:rotate(-3deg);margin-bottom:14px;">
+          ${fb.overallScore>=7 ? 'REVIEWED — SOLID' : 'REVIEWED — NEEDS WORK'}
+        </div>
+      </div>
+      <div class="grid grid-4" style="margin-bottom:18px;">
+        <div class="kpi"><div class="num">${fb.overallScore}/10</div><div class="lbl">Overall</div></div>
+        <div class="kpi"><div class="num">${fb.structureScore}/10</div><div class="lbl">Structure</div></div>
+        <div class="kpi"><div class="num">${fb.mathScore}/10</div><div class="lbl">Math</div></div>
+        <div class="kpi"><div class="num">${fb.synthesisScore}/10</div><div class="lbl">Synthesis</div></div>
+      </div>
+      <p style="font-size:14.5px;font-weight:600;">${escapeHtml(fb.summary)}</p>
+      <div class="grid grid-2" style="margin:16px 0;">
+        <div class="card">
+          <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--cleared-teal);margin-bottom:8px;">Strengths</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;">${fb.strengths.map(s=>`<li style="margin-bottom:6px;">${escapeHtml(s)}</li>`).join('')}</ul>
+        </div>
+        <div class="card">
+          <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--stamp-red);margin-bottom:8px;">To improve</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;">${fb.improvements.map(s=>`<li style="margin-bottom:6px;">${escapeHtml(s)}</li>`).join('')}</ul>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px;">
+        <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:#5c4e2f;margin-bottom:8px;">Vs. the model framework</div>
+        <p style="font-size:13.5px;margin:0;">${escapeHtml(fb.modelComparison)}</p>
+      </div>
+      <div class="card" style="margin-bottom:10px;background:#f6f0dc;">
+        <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:#5c4e2f;margin-bottom:8px;">Interviewer's model recommendation</div>
+        <p style="font-size:13.5px;margin:0;">${escapeHtml(c.recommendation)}</p>
+      </div>
+      ${state.savedThisCase
+        ? `<div class="badge badge-teal" style="padding:8px 14px;font-size:11.5px;">✓ Saved to portfolio</div>`
+        : `<button class="btn btn-teal" onclick="doSaveToPortfolio()">Save to portfolio →</button>
+           <button class="btn btn-outline" style="margin-left:10px;" onclick="discardCase()">Discard &amp; start another</button>`}
+    `;
+  }
+
+  el.innerHTML = `
+    <div class="case-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;">
+        <div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+            <span class="badge badge-amber">${escapeHtml(c.industry)}</span>
+            <span class="badge badge-red">${escapeHtml(c.caseType)}</span>
+            <span class="badge" style="background:rgba(236,231,219,0.12);color:var(--cream-ink);">${escapeHtml(c.difficulty)}</span>
+          </div>
+          <div style="font-family:var(--font-display);font-size:20px;font-weight:700;">${escapeHtml(c.title)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="timer timerNum" id="timerDisplay">${fmtTime(state.timerSeconds)}</div>
+          <button class="btn btn-outline" style="margin-top:6px;border-color:var(--cream-ink);color:var(--cream-ink);padding:5px 12px;font-size:11px;" onclick="toggleTimer()">${state.timerRunning ? 'Pause' : 'Resume'}</button>
+        </div>
+      </div>
+    </div>
+
+    ${!state.feedback ? `
+      <div class="step-tabs">${stepTabsHtml}</div>
+      <div class="card" style="margin-bottom:16px;">${stepBody}</div>
+      <div style="display:flex;justify-content:space-between;">
+        <button class="btn btn-outline" ${stepIdx===0?'disabled':''} onclick="prevStep()">← Back</button>
+        ${isLast
+          ? `<button class="btn btn-primary" onclick="doGrade()">Submit for feedback →</button>`
+          : `<button class="btn btn-dark" onclick="nextStep()">Next: ${STEP_LABELS[STEP_ORDER[stepIdx+1]]} →</button>`}
+      </div>
+    ` : ''}
+
+    ${feedbackHtml}
+  `;
+}
+
+function setStep(s){ state.currentStep = s; renderPractice(); }
+function nextStep(){ const i = STEP_ORDER.indexOf(state.currentStep); if (i < STEP_ORDER.length-1){ state.currentStep = STEP_ORDER[i+1]; renderPractice(); } }
+function prevStep(){ const i = STEP_ORDER.indexOf(state.currentStep); if (i > 0){ state.currentStep = STEP_ORDER[i-1]; renderPractice(); } }
+function revealClarify(){ state.showClarifyAnswers = true; renderPractice(); }
+
+async function doGrade(){
+  stopTimer();
+  state.grading = true;
+  state.gradeError = null;
+  renderPractice();
+  try{
+    const fb = await gradeSubmissionFromAPI(state.currentCase, state.work);
+    state.feedback = fb;
+    state.grading = false;
+    renderPractice();
+  }catch(e){
+    console.error(e);
+    state.grading = false;
+    state.gradeError = (e && e.message) ? e.message : 'unknown error';
+    renderPractice();
+  }
+}
+
+async function doSaveToPortfolio(){
+  const c = state.currentCase;
+  const fb = state.feedback;
+  const summary = {
+    id: c.id, title: c.title, industry: c.industry, caseType: c.caseType, difficulty: c.difficulty,
+    overallScore: fb.overallScore, dateCompleted: new Date().toISOString(), timeSpentSec: state.timerSeconds
+  };
+  const detail = { case: c, work: state.work, feedback: fb, timeSpentSec: state.timerSeconds, dateCompleted: summary.dateCompleted };
+  await saveCaseDetail(c.id, detail);
+  state.portfolio.cases.push(summary);
+  bumpStreak();
+  await savePortfolio();
+  state.savedThisCase = true;
+  renderPractice();
+  renderTopStats();
+}
+
+function discardCase(){
+  state.currentCase = null;
+  state.feedback = null;
+  stopTimer();
+  switchView('generate');
+}
+
+/* =========================================================================
+   RENDER: MOCK INTERVIEW (live chat)
+   ========================================================================= */
+function setMockField(key, val){
+  state.mockForm[key] = val;
+  renderMockInterview();
+}
+
+async function startMockInterview(){
+  state.mock.generating = true;
+  state.mock.genError = null;
+  renderMockInterview();
+  try{
+    const caseObj = await generateCaseFromAPI(state.mockForm);
+    caseObj.id = 'mock_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+    caseObj.dateCreated = new Date().toISOString();
+    state.mock.case = caseObj;
+    state.mock.active = true;
+    state.mock.ended = false;
+    state.mock.feedback = null;
+    state.mock.gradeError = null;
+    state.mock.savedThisCase = false;
+    state.mock.transcript = [
+      { role: 'interviewer', content: `${caseObj.clientContext}\n\n${caseObj.question}` }
+    ];
+    state.mock.generating = false;
+    state.timerSeconds = 0;
+    stopTimer();
+    startTimer();
+    renderMockInterview();
+  }catch(e){
+    console.error(e);
+    state.mock.generating = false;
+    state.mock.genError = (e && e.message) ? e.message : 'unknown error';
+    renderMockInterview();
+  }
+}
+
+async function sendMockMessage(){
+  const box = document.getElementById('mockInput');
+  if (!box) return;
+  const text = box.value.trim();
+  if (!text || state.mock.sending) return;
+  state.mock.transcript.push({ role:'candidate', content: text });
+  box.value = '';
+  state.mock.sending = true;
+  renderMockInterview();
+  try{
+    const reply = await getInterviewerReply(state.mock.case, state.mock.transcript);
+    state.mock.transcript.push({ role:'interviewer', content: reply });
+    state.mock.sending = false;
+    renderMockInterview();
+  }catch(e){
+    console.error(e);
+    state.mock.transcript.push({ role:'interviewer', content: "(connection hiccup — the interviewer didn't catch that. Try sending again.)" });
+    state.mock.sending = false;
+    renderMockInterview();
+  }
+}
+function handleMockKeydown(e){
+  if (e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    sendMockMessage();
+  }
+}
+
+async function endMockInterview(){
+  stopTimer();
+  state.mock.grading = true;
+  state.mock.gradeError = null;
+  renderMockInterview();
+  try{
+    const fb = await gradeMockInterviewFromAPI(state.mock.case, state.mock.transcript);
+    state.mock.feedback = fb;
+    state.mock.grading = false;
+    renderMockInterview();
+  }catch(e){
+    console.error(e);
+    state.mock.grading = false;
+    state.mock.gradeError = (e && e.message) ? e.message : 'unknown error';
+    renderMockInterview();
+  }
+}
+
+async function saveMockToPortfolio(){
+  const c = state.mock.case;
+  const fb = state.mock.feedback;
+  const summary = {
+    id: c.id, title: c.title + ' (Live Interview)', industry: c.industry, caseType: c.caseType, difficulty: c.difficulty,
+    overallScore: fb.overallScore, dateCompleted: new Date().toISOString(), timeSpentSec: state.timerSeconds, isMock: true
+  };
+  const detail = { case: c, transcript: state.mock.transcript, feedback: fb, timeSpentSec: state.timerSeconds, dateCompleted: summary.dateCompleted, isMock: true };
+  await saveCaseDetail(c.id, detail);
+  state.portfolio.cases.push(summary);
+  bumpStreak();
+  await savePortfolio();
+  state.mock.savedThisCase = true;
+  renderMockInterview();
+  renderTopStats();
+}
+
+function discardMock(){
+  state.mock = { active:false, case:null, transcript:[], sending:false, ended:false, feedback:null, grading:false, gradeError:null, savedThisCase:false, genError:null, generating:false };
+  stopTimer();
+  renderMockInterview();
+}
+
+function renderMockInterview(){
+  const el = document.getElementById('view-mockinterview');
+  const m = state.mock;
+
+  if (!m.active){
+    const f = state.mockForm;
+    const industryOptions = INDUSTRIES.map(i => `<option value="${i}" ${f.industry===i?'selected':''}>${i}</option>`).join('');
+    const typeChips = CASE_TYPES.map(t => `<button type="button" class="chip ${f.caseType===t?'selected':''}" onclick="setMockField('caseType','${t.replace(/'/g,"\\'")}')">${t}</button>`).join('');
+    const diffChips = DIFFICULTIES.map(d => `<button type="button" class="chip ${f.difficulty===d?'selected':''}" onclick="setMockField('difficulty','${d.replace(/'/g,"\\'")}')">${d}</button>`).join('');
+    el.innerHTML = `
+      <div class="eyebrow">Case File — Live Simulation</div>
+      <h1 class="page-title">Mock Interview</h1>
+      <p class="page-desc">A live, back-and-forth chat with an AI interviewer who stays in character — asks follow-ups, pushes back, and holds the case data until you ask the right questions. Closest thing to the real room.</p>
+
+      ${m.genError ? `<div class="card" style="border-color:var(--stamp-red);color:var(--stamp-red);margin-bottom:18px;">Couldn't start the interview: ${escapeHtml(m.genError)}. <button class="btn btn-outline" style="margin-left:8px;padding:4px 10px;" onclick="startMockInterview()">Retry</button></div>` : ''}
+
+      <div class="card" style="margin-bottom:18px;">
+        <label class="field-label">Industry</label>
+        <select onchange="setMockField('industry', this.value)">${industryOptions}</select>
+      </div>
+      <div class="card" style="margin-bottom:18px;">
+        <label class="field-label">Case type</label>
+        <div class="chip-group">${typeChips}</div>
+      </div>
+      <div class="card" style="margin-bottom:18px;">
+        <label class="field-label">Difficulty</label>
+        <div class="chip-group">${diffChips}</div>
+      </div>
+      <div class="card" style="margin-bottom:24px;">
+        <label class="field-label">Optional focus</label>
+        <input type="text" placeholder="e.g. a mid-size grocery chain in the Midwest" value="${escapeHtml(f.focus)}" oninput="state.mockForm.focus=this.value" />
+      </div>
+
+      ${m.generating ? `<div class="loader"><span class="dot"></span><span class="dot"></span><span class="dot"></span> The interviewer is taking their seat…</div>`
+        : `<button class="btn btn-primary" onclick="startMockInterview()">Start the interview →</button>`}
+    `;
+    return;
+  }
+
+  const c = m.case;
+  const bubbles = m.transcript.map(msg => `
+    <div class="chat-msg ${msg.role}">
+      <div class="chat-role">${msg.role === 'interviewer' ? 'Interviewer' : 'You'}</div>
+      <div class="chat-bubble">${escapeHtml(msg.content)}</div>
+    </div>
+  `).join('');
+
+  let feedbackHtml = '';
+  if (m.gradeError){
+    feedbackHtml = `<div class="card" style="border-color:var(--stamp-red);color:var(--stamp-red);margin-top:18px;">Couldn't grade this interview: ${escapeHtml(m.gradeError)}. <button class="btn btn-outline" style="margin-left:8px;padding:4px 10px;" onclick="endMockInterview()">Retry</button></div>`;
+  }
+  if (m.grading){
+    feedbackHtml = `<div class="loader" style="margin-top:14px;"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Interviewer is writing up their notes…</div>`;
+  }
+  if (m.feedback){
+    const fb = m.feedback;
+    feedbackHtml = `
+      <hr class="rule"/>
+      <div class="stamp ${fb.overallScore>=7?'cleared':''}" style="position:static;display:inline-block;transform:rotate(-3deg);margin-bottom:14px;">
+        ${fb.overallScore>=7 ? 'REVIEWED — SOLID' : 'REVIEWED — NEEDS WORK'}
+      </div>
+      <div class="grid grid-4" style="margin-bottom:18px;">
+        <div class="kpi"><div class="num">${fb.overallScore}/10</div><div class="lbl">Overall</div></div>
+        <div class="kpi"><div class="num">${fb.structureScore}/10</div><div class="lbl">Structure</div></div>
+        <div class="kpi"><div class="num">${fb.mathScore}/10</div><div class="lbl">Math</div></div>
+        <div class="kpi"><div class="num">${fb.synthesisScore}/10</div><div class="lbl">Synthesis</div></div>
+      </div>
+      <p style="font-size:14.5px;font-weight:600;">${escapeHtml(fb.summary)}</p>
+      <div class="grid grid-2" style="margin:16px 0;">
+        <div class="card">
+          <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--cleared-teal);margin-bottom:8px;">Strengths</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;">${fb.strengths.map(s=>`<li style="margin-bottom:6px;">${escapeHtml(s)}</li>`).join('')}</ul>
+        </div>
+        <div class="card">
+          <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--stamp-red);margin-bottom:8px;">To improve</div>
+          <ul style="margin:0;padding-left:18px;font-size:13.5px;">${fb.improvements.map(s=>`<li style="margin-bottom:6px;">${escapeHtml(s)}</li>`).join('')}</ul>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px;">
+        <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:#5c4e2f;margin-bottom:8px;">Vs. the model framework</div>
+        <p style="font-size:13.5px;margin:0;">${escapeHtml(fb.modelComparison)}</p>
+      </div>
+      <div class="card" style="margin-bottom:10px;background:#f6f0dc;">
+        <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:#5c4e2f;margin-bottom:8px;">Interviewer's model recommendation</div>
+        <p style="font-size:13.5px;margin:0;">${escapeHtml(c.recommendation)}</p>
+      </div>
+      ${m.savedThisCase
+        ? `<div class="badge badge-teal" style="padding:8px 14px;font-size:11.5px;">✓ Saved to portfolio</div>`
+        : `<button class="btn btn-teal" onclick="saveMockToPortfolio()">Save to portfolio →</button>
+           <button class="btn btn-outline" style="margin-left:10px;" onclick="discardMock()">Discard &amp; start another</button>`}
+    `;
+  }
+
+  el.innerHTML = `
+    <div class="case-header">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;">
+        <div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+            <span class="badge badge-amber">${escapeHtml(c.industry)}</span>
+            <span class="badge badge-red">${escapeHtml(c.caseType)}</span>
+            <span class="badge" style="background:rgba(236,231,219,0.12);color:var(--cream-ink);">${escapeHtml(c.difficulty)}</span>
+          </div>
+          <div style="font-family:var(--font-display);font-size:20px;font-weight:700;">${escapeHtml(c.title)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="timer timerNum">${fmtTime(state.timerSeconds)}</div>
+          <button class="btn btn-outline" style="margin-top:6px;border-color:var(--cream-ink);color:var(--cream-ink);padding:5px 12px;font-size:11px;" onclick="toggleTimer()">${state.timerRunning ? 'Pause' : 'Resume'}</button>
+        </div>
+      </div>
+    </div>
+
+    ${!m.feedback ? `
+      <div class="chat-window" id="chatWindow">${bubbles}</div>
+      ${m.sending ? `<div class="typing-indicator">Interviewer is typing…</div>` : ''}
+      <div class="chat-input-row">
+        <textarea id="mockInput" rows="2" placeholder="Ask a clarifying question, lay out your framework, or give your recommendation… (Enter to send, Shift+Enter for new line)" onkeydown="handleMockKeydown(event)"></textarea>
+        <button class="btn btn-primary" onclick="sendMockMessage()" ${m.sending?'disabled':''}>Send</button>
+      </div>
+      <div style="margin-top:14px;">
+        <button class="btn btn-outline" onclick="endMockInterview()">End interview &amp; get feedback →</button>
+      </div>
+    ` : ''}
+
+    ${feedbackHtml}
+  `;
+
+  const cw = document.getElementById('chatWindow');
+  if (cw) cw.scrollTop = cw.scrollHeight;
+}
+
+/* =========================================================================
+   RENDER: PORTFOLIO
+   ========================================================================= */
+let portfolioDetailCache = {};
+
+async function renderPortfolio(){
+  const el = document.getElementById('view-portfolio');
+  const cases = state.portfolio.cases.slice().sort((a,b)=> new Date(b.dateCompleted) - new Date(a.dateCompleted));
+
+  if (!cases.length){
+    el.innerHTML = `
+      <div class="eyebrow">Case File — Portfolio</div>
+      <h1 class="page-title">Your Portfolio</h1>
+      <div class="empty-state card">
+        <div class="glyph">📁</div>
+        <div style="font-weight:600;margin-bottom:6px;">Empty folder</div>
+        <div style="margin-bottom:18px;">Completed cases land here — a running record you can point to when recruiters ask how you've prepped.</div>
+        <button class="btn btn-primary" onclick="switchView('generate')">Draft your first case →</button>
+      </div>`;
+    return;
+  }
+
+  const rows = await Promise.all(cases.map(async c => {
+    const expanded = state.portfolioExpanded === c.id;
+    let detailHtml = '';
+    if (expanded){
+      if (!portfolioDetailCache[c.id]) portfolioDetailCache[c.id] = await loadCaseDetail(c.id);
+      const d = portfolioDetailCache[c.id];
+      if (d){
+        detailHtml = `
+          <div style="padding:16px 4px 6px;">
+            <div class="card" style="margin-bottom:12px;background:#f6f0dc;">
+              <div style="font-weight:600;font-size:13.5px;margin-bottom:4px;">Question</div>
+              <div style="font-size:13.5px;">${escapeHtml(d.case.question)}</div>
+            </div>
+            <div class="grid grid-2">
+              <div class="card">
+                <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--cleared-teal);margin-bottom:6px;">Strengths</div>
+                <ul style="margin:0;padding-left:16px;font-size:13px;">${d.feedback.strengths.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ul>
+              </div>
+              <div class="card">
+                <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--stamp-red);margin-bottom:6px;">To improve</div>
+                <ul style="margin:0;padding-left:16px;font-size:13px;">${d.feedback.improvements.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ul>
+              </div>
+            </div>
+            <div style="margin-top:10px;font-size:12px;">
+              <button class="btn btn-outline" style="padding:5px 10px;font-size:11px;" onclick="removeCase('${c.id}')">Remove from portfolio</button>
+            </div>
+          </div>`;
+      }
+    }
+    return `
+      <div>
+        <div class="case-row" onclick="toggleExpand('${c.id}')" style="cursor:pointer;">
+          <div class="score-ring ${scoreClass(c.overallScore)}">${c.overallScore}</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14.5px;">${escapeHtml(c.title)}</div>
+            <div style="font-family:var(--font-mono);font-size:11px;color:#5c4e2f;margin-top:3px;">
+              ${escapeHtml(c.industry)} · ${escapeHtml(c.caseType)} · ${fmtDate(c.dateCompleted)} · ${fmtTime(c.timeSpentSec||0)}
+            </div>
+          </div>
+          <span class="badge badge-amber">${escapeHtml(c.difficulty)}</span>
+          <span style="font-family:var(--font-mono);font-size:14px;">${expanded ? '▲' : '▼'}</span>
+        </div>
+        ${detailHtml}
+      </div>`;
+  }));
+
+  el.innerHTML = `
+    <div class="eyebrow">Case File — Portfolio</div>
+    <h1 class="page-title">Your Portfolio</h1>
+    <p class="page-desc">Every completed case, scored and on record. Use "Copy summary" to paste a clean prep log into a resume note, cover letter, or recruiting conversation.</p>
+    <div style="margin-bottom:20px;">
+      <button class="btn btn-dark" onclick="copyPortfolioSummary()">Copy portfolio summary</button>
+      <button class="btn btn-primary" style="margin-left:10px;" onclick="exportPortfolioPDF()">Export to PDF</button>
+      <span id="copyConfirm" style="font-family:var(--font-mono);font-size:11.5px;color:var(--cleared-teal);margin-left:10px;"></span>
+    </div>
+    ${rows.join('')}
+  `;
+}
+
+function toggleExpand(id){
+  state.portfolioExpanded = state.portfolioExpanded === id ? null : id;
+  renderPortfolio();
+}
+
+async function removeCase(id){
+  if (!confirm("Remove this case from your portfolio? This can't be undone.")) return;
+  state.portfolio.cases = state.portfolio.cases.filter(c => c.id !== id);
+  await savePortfolio();
+  await storDelete('case-detail:' + id);
+  delete portfolioDetailCache[id];
+  state.portfolioExpanded = null;
+  renderPortfolio();
+  renderTopStats();
+}
+
+function copyPortfolioSummary(){
+  const cases = state.portfolio.cases.slice().sort((a,b)=> new Date(b.dateCompleted) - new Date(a.dateCompleted));
+  const lines = [
+    'CASE INTERVIEW PREP LOG', '========================', '',
+    `Cases completed: ${cases.length}    Avg score: ${avgScore()}/10    Total practice time: ${fmtTime(totalTime())}`, ''
+  ];
+  cases.forEach(c => {
+    lines.push(`• ${c.title} — ${c.industry} / ${c.caseType} (${c.difficulty}) — Score ${c.overallScore}/10 — ${fmtDate(c.dateCompleted)}`);
+  });
+  const text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const conf = document.getElementById('copyConfirm');
+    if (conf){ conf.textContent = 'Copied ✓'; setTimeout(()=>{ if(conf) conf.textContent=''; }, 2500); }
+  }).catch(() => {
+    const conf = document.getElementById('copyConfirm');
+    if (conf) conf.textContent = 'Could not copy — select and copy manually.';
+  });
+}
+
+async function exportPortfolioPDF(){
+  const cases = state.portfolio.cases.slice().sort((a,b)=> new Date(b.dateCompleted) - new Date(a.dateCompleted));
+  if (!cases.length) return;
+
+  const details = await Promise.all(cases.map(async c => {
+    if (!portfolioDetailCache[c.id]) portfolioDetailCache[c.id] = await loadCaseDetail(c.id);
+    return { summary: c, detail: portfolioDetailCache[c.id] };
+  }));
+
+  const genDate = new Date().toLocaleDateString(undefined, { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  const typeCounts = {};
+  cases.forEach(c => { typeCounts[c.caseType] = (typeCounts[c.caseType]||0)+1; });
+  const typeSummary = Object.keys(typeCounts).map(t => `${t} (${typeCounts[t]})`).join(' · ');
+
+  const caseBlocks = details.map(({summary, detail}) => {
+    if (!detail) return '';
+    const fb = detail.feedback;
+    return `
+      <div style="page-break-inside:avoid; border-top:2px solid #111; padding-top:16px; margin-top:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <h3 style="margin:0; font-size:17px;">${escapeHtml(summary.title)}${summary.isMock ? ' <span style=\"font-size:11px;font-weight:normal;\">(Live Mock Interview)</span>' : ''}</h3>
+          <div style="font-size:13px; font-weight:bold;">${fb.overallScore}/10</div>
+        </div>
+        <div style="font-size:11.5px; color:#444; margin:4px 0 10px;">
+          ${escapeHtml(summary.industry)} · ${escapeHtml(summary.caseType)} · ${escapeHtml(summary.difficulty)} · ${fmtDate(summary.dateCompleted)} · ${fmtTime(summary.timeSpentSec||0)}
+        </div>
+        <div style="font-size:12.5px; margin-bottom:8px;"><b>Question:</b> ${escapeHtml(detail.case.question)}</div>
+        <div style="font-size:12.5px; margin-bottom:8px;"><b>Scores:</b> Structure ${fb.structureScore}/10 · Math ${fb.mathScore}/10 · Synthesis ${fb.synthesisScore}/10</div>
+        <div style="font-size:12.5px; margin-bottom:8px;"><b>Verdict:</b> ${escapeHtml(fb.summary)}</div>
+        <div style="display:flex; gap:24px; font-size:12px;">
+          <div style="flex:1;"><b>Strengths</b><ul style="margin:4px 0 0; padding-left:16px;">${fb.strengths.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ul></div>
+          <div style="flex:1;"><b>To improve</b><ul style="margin:4px 0 0; padding-left:16px;">${fb.improvements.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ul></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('printPortfolio').innerHTML = `
+    <div style="font-family: Georgia, 'Times New Roman', serif; max-width:760px; margin:0 auto; padding:36px 10px;">
+      <div style="border-bottom:3px solid #111; padding-bottom:16px; margin-bottom:20px;">
+        <div style="font-family: 'Courier New', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:#555;">The Case Room — Prep Portfolio</div>
+        <h1 style="margin:6px 0 4px; font-size:28px;">Case Interview Prep Portfolio</h1>
+        <div style="font-size:12.5px; color:#555;">Generated ${genDate}</div>
+      </div>
+      <div style="display:flex; gap:28px; margin-bottom:6px; font-size:13px;">
+        <div><b>${cases.length}</b> cases completed</div>
+        <div><b>${avgScore()}/10</b> average score</div>
+        <div><b>${fmtTime(totalTime())}</b> total practice time</div>
+      </div>
+      <div style="font-size:12px; color:#555; margin-bottom:10px;">Case type coverage: ${typeSummary}</div>
+      ${caseBlocks}
+      <div style="margin-top:30px; padding-top:12px; border-top:1px solid #999; font-size:10.5px; color:#777;">
+        Prepared with The Case Room — a self-directed consulting interview practice tool. Not affiliated with any consulting firm.
+      </div>
+    </div>
+  `;
+
+  window.print();
+}
+window.addEventListener('afterprint', () => {
+  const p = document.getElementById('printPortfolio');
+  if (p) p.innerHTML = '';
+});
+
+/* =========================================================================
+   RENDER: FRAMEWORK LIBRARY (static reference content)
+   ========================================================================= */
+const LIBRARY = [
+  { id:'general', title:'General Case Approach', body:`Open by restating the question in your own words and asking clarifying questions on scope, client goals, timeline, and definitions. Structure your framework out loud before diving into any branch. Stay hypothesis-driven — state what you expect to find and why. Do math out loud, sanity-check your numbers, and round sensibly. Always synthesize answer-first: lead with your recommendation, then give 2-3 supporting reasons and a risk or next step.` },
+  { id:'profitability', title:'Profitability Framework', body:`Profit = Revenue − Costs. Revenue = Price × Volume (break volume into customers × frequency, or units sold across segments/channels). Costs split into Fixed and Variable, and further into categories like COGS, labor, marketing, overhead. Ask when the profit decline started and whether it's revenue-driven, cost-driven, or both, then quantify each branch before recommending.` },
+  { id:'market-entry', title:'Market Entry Framework', body:`Cover: (1) Market attractiveness — size, growth, profitability, regulation; (2) Competitive landscape — key players, market share, barriers to entry; (3) Capability fit — does the client have the assets, brand, or channels to win; (4) Entry mode — organic build, acquisition, partnership/JV, licensing; (5) Financials — investment required, expected returns, payback period.` },
+  { id:'ma', title:'M&A / Due Diligence Framework', body:`Evaluate: (1) Strategic rationale — why this deal, what capability or market gap it fills; (2) Standalone value of the target — market position, financials, growth trajectory; (3) Synergies — revenue synergies (cross-sell, new channels) and cost synergies (overhead, procurement, footprint); (4) Risks — integration, cultural fit, regulatory, customer/talent retention; (5) Valuation — is the price justified relative to standalone value plus synergies.` },
+  { id:'growth', title:'Growth Strategy Framework', body:`Use an Ansoff-style lens: (1) Market penetration — sell more of the current product to current customers; (2) Product development — new products for current customers; (3) Market development — current products into new geographies/segments; (4) Diversification — new products for new markets. For each lever, size the opportunity and assess feasibility and risk.` },
+  { id:'pricing', title:'Pricing Strategy Framework', body:`Anchor on three lenses: (1) Cost-based — cost per unit plus target margin; (2) Value-based — willingness to pay, perceived value versus substitutes; (3) Competition-based — where competitors are priced and how the client should position relative to them. Consider price elasticity, segmentation (different prices for different segments), and second-order effects like channel conflict or cannibalization.` },
+  { id:'ops', title:'Operations & Cost Reduction Framework', body:`Map the value chain end to end (procurement → production → logistics → distribution → after-sales) and identify where cost or inefficiency sits. Split costs into fixed vs. variable and controllable vs. uncontrollable. Consider levers: process efficiency, automation, footprint consolidation, supplier renegotiation, outsourcing, and headcount — then weigh impact against feasibility and risk to quality/service.` },
+  { id:'sizing', title:'Market Sizing / Guesstimates', body:`Pick a clear approach — top-down (start from total population/market and narrow with filters) or bottom-up (build up from a unit of demand, e.g. per-store or per-customer spend). State every assumption out loud, use round numbers, and sanity-check the final answer against a number you already know (population, GDP, category size) before locking it in.` },
+  { id:'tips', title:'Interview-Day Tips', body:`Think out loud — silence reads as stuck, not thoughtful. Take a moment to structure before speaking; interviewers reward a clear pause over a rushed ramble. Write numbers big and legible if using a whiteboard or paper. When you get an exhibit, state what you're looking for before reading every number. Always close with a confident, structured recommendation — never trail off.` }
+];
+
+function renderLibrary(){
+  const el = document.getElementById('view-library');
+  el.innerHTML = `
+    <div class="eyebrow">Case File — Reference</div>
+    <h1 class="page-title">Framework Library</h1>
+    <p class="page-desc">Quick-reference frameworks to review before a drill, or to sanity-check your structure against after a case.</p>
+    ${LIBRARY.map(item => `
+      <div class="card" style="margin-bottom:10px;cursor:pointer;" onclick="toggleLibrary('${item.id}')">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-weight:600;font-size:14.5px;">${escapeHtml(item.title)}</div>
+          <span style="font-family:var(--font-mono);font-size:13px;">${state.libraryOpen[item.id] ? '−' : '+'}</span>
+        </div>
+        ${state.libraryOpen[item.id] ? `<p style="font-size:13.5px;margin:12px 0 2px;line-height:1.6;">${escapeHtml(item.body)}</p>` : ''}
+      </div>
+    `).join('')}
+  `;
+}
+function toggleLibrary(id){
+  state.libraryOpen[id] = !state.libraryOpen[id];
+  renderLibrary();
+}
+
+/* =========================================================================
+   APPLICATION TRACKER — company database + tracking
+   ========================================================================= */
+/* Opening windows below are TYPICAL PATTERNS drawn from recent recruiting
+   cycles (season/month-level, not exact dates) — every firm shifts its
+   exact deadlines year to year and many run rolling admissions, so the
+   official careers page linked on each card is always the source of truth. */
+const COMPANIES = [
+  // ---------------- UK ----------------
+  { id:'mck-uk', company:'McKinsey & Company', region:'UK', tier:'MBB', scheme:'Internship + Graduate (Business Analyst)', window:'Portal typically reopens Jan for that year\'s intake; national deadline often late March', notes:'Also runs "Discover" insight events in spring — a good low-commitment entry point.', url:'https://www.mckinsey.com/careers' },
+  { id:'bcg-uk', company:'Boston Consulting Group', region:'UK', tier:'MBB', scheme:'Internship + Graduate', window:'Undergrad apps typically open Sep–Nov; deadlines vary by university', notes:'"Bridge to BCG" programme is a useful earlier entry point for penultimate-year students.', url:'https://careers.bcg.com' },
+  { id:'bain-uk', company:'Bain & Company', region:'UK', tier:'MBB', scheme:'Internship + Graduate (Associate Consultant)', window:'Two windows most years — spring (~March) and fall (~Aug/Sept)', notes:'Bain explicitly says apply to whichever window you\'re ready for — no advantage to the earlier one alone.', url:'https://www.bain.com/careers/' },
+  { id:'deloitte-uk', company:'Deloitte UK', region:'UK', tier:'Big Four & Strategy Arms', scheme:'Graduate scheme + Summer Internship', window:'Opens Sept/Oct (summer internships sometimes Jul/Aug); rolling, fills fast', notes:'Monitor Deloitte is the strategy-specific arm — search separately on the careers site.', url:'https://www2.deloitte.com/uk/en/careers/students.html' },
+  { id:'pwc-uk', company:'PwC UK', region:'UK', tier:'Big Four & Strategy Arms', scheme:'Graduate scheme + Internship', window:'Opens late summer/early autumn (Aug–Sept); rolling into winter', notes:'Strategy& is PwC\'s dedicated strategy consulting brand — separate track, listed below.', url:'https://www.pwc.co.uk/careers/student-careers.html' },
+  { id:'ey-uk', company:'EY UK', region:'UK', tier:'Big Four & Strategy Arms', scheme:'Graduate scheme + Internship', window:'Opens mid-summer (Jul); "Experience Days" from mid-Oct; rolling', notes:'EY-Parthenon is the strategy arm — apply via the EY careers site and filter for it.', url:'https://www.ey.com/en_uk/careers/students' },
+  { id:'kpmg-uk', company:'KPMG UK', region:'UK', tier:'Big Four & Strategy Arms', scheme:'Graduate scheme + Internship', window:'Opens early September; rolling, high demand', notes:'Runs distinct tracks for audit, consulting, tax, and technology — pick the consulting stream.', url:'https://kpmgcareers.co.uk/' },
+  { id:'accenture-uk', company:'Accenture UK', region:'UK', tier:'Global Generalist', scheme:'Graduate scheme + Internship', window:'Opens late summer/early autumn; rolling, can close early if quota fills', notes:'Uses the Headstart platform; strategy-flavoured roles sit under Accenture Strategy.', url:'https://www.accenture.com/gb-en/careers/local/university-careers' },
+  { id:'ow-uk', company:'Oliver Wyman', region:'UK', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens autumn (Sept–Oct); typically non-rolling deadline Nov/Dec', notes:'Strong in financial services and risk consulting specifically.', url:'https://www.oliverwyman.com/careers.html' },
+  { id:'kearney-uk', company:'Kearney', region:'UK', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens autumn; deadlines vary by target campus', notes:'Operations and supply-chain heritage alongside core strategy work.', url:'https://www.kearney.com/careers' },
+  { id:'lek-uk', company:'L.E.K. Consulting', region:'UK', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens autumn (Sept/Oct)', notes:'Known for rigorous case interviews and a strong private equity due-diligence practice.', url:'https://www.lek.com/careers' },
+  { id:'rb-uk', company:'Roland Berger', region:'UK', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Europe\'s largest homegrown strategy firm — deep automotive and industrials expertise.', url:'https://www.rolandberger.com/en/Careers/' },
+  { id:'strategyand-uk', company:'Strategy& (PwC)', region:'UK', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Broadly aligned with PwC\'s autumn window; check separately from core PwC roles', notes:'PwC\'s global strategy consulting brand — apply via the Strategy& careers site.', url:'https://www.strategyand.pwc.com/gx/en/careers.html' },
+  { id:'capgemini-uk', company:'Capgemini Invent', region:'UK', tier:'Global Generalist', scheme:'Graduate scheme + Internship', window:'Opens autumn, rolling', notes:'Digital/tech-forward consulting arm of Capgemini.', url:'https://www.capgemini.com/gb-en/careers/' },
+  { id:'baringa-uk', company:'Baringa Partners', region:'UK', tier:'Strategy Boutique', scheme:'Graduate scheme', window:'Opens autumn, rolling', notes:'Energy, utilities and financial services-focused boutique; known for being non-target friendly.', url:'https://www.baringa.com/en/careers/' },
+  { id:'occ-uk', company:'OC&C Strategy Consultants', region:'UK', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Small, consumer/retail-focused strategy boutique with a strong case-prep culture.', url:'https://www.occstrategy.com/en/careers' },
+  { id:'sk-uk', company:'Simon-Kucher', region:'UK', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Pricing and commercial-strategy specialist — expect pricing-heavy cases.', url:'https://www.simon-kucher.com/en/careers' },
+  { id:'am-uk', company:'Alvarez & Marsal', region:'UK', tier:'Economic & Advisory', scheme:'Graduate scheme', window:'Opens autumn, rolling', notes:'Turnaround, restructuring and performance-improvement focus rather than classic strategy cases.', url:'https://www.alvarezandmarsal.com/careers' },
+
+  // ---------------- US ----------------
+  { id:'mck-us', company:'McKinsey & Company', region:'US', tier:'MBB', scheme:'Internship + Graduate (Business Analyst)', window:'Undergrad/Master\'s apps typically open Jun–Jul, deadlines by early Sept (varies by school); MBA window ~Jul–Sept', notes:'Advanced Professional Degree (APD) track exists for PhD/JD/MD candidates on its own timeline.', url:'https://www.mckinsey.com/careers' },
+  { id:'bcg-us', company:'Boston Consulting Group', region:'US', tier:'MBB', scheme:'Internship + Graduate', window:'Undergrad Summer Associate apps ~Jun–Nov depending on school; MBA Summer Consultant ~Sept–Oct', notes:'On-campus deadlines vary a lot by school — check your career office alongside the BCG portal.', url:'https://careers.bcg.com' },
+  { id:'bain-us', company:'Bain & Company', region:'US', tier:'MBB', scheme:'Internship + Graduate (Associate Consultant)', window:'Two windows most years — spring (~March) and fall (~Aug/Sept)', notes:'Bain\'s two-window system means missing the spring round doesn\'t rule you out of the cycle.', url:'https://www.bain.com/careers/' },
+  { id:'deloitte-us', company:'Deloitte US', region:'US', tier:'Big Four & Strategy Arms', scheme:'Summer Internship + Graduate', window:'Opens Jul–Aug; rolling', notes:'Monitor Deloitte is the strategy-specific practice within Deloitte Consulting.', url:'https://www2.deloitte.com/us/en/careers/students.html' },
+  { id:'pwc-us', company:'PwC US', region:'US', tier:'Big Four & Strategy Arms', scheme:'Internship + Graduate', window:'Opens late summer; rolling', notes:'Strategy& operates as PwC\'s dedicated strategy brand in the US too.', url:'https://www.pwc.com/us/en/careers/campus.html' },
+  { id:'ey-us', company:'EY US', region:'US', tier:'Big Four & Strategy Arms', scheme:'Internship + Graduate', window:'Opens mid-summer; rolling', notes:'EY-Parthenon handles the strategy-consulting roles specifically.', url:'https://www.ey.com/en_us/careers/students' },
+  { id:'kpmg-us', company:'KPMG US', region:'US', tier:'Big Four & Strategy Arms', scheme:'Internship + Graduate', window:'Opens ~August; rolling', notes:'Runs a structured cohort-intake calendar rather than a single fixed deadline.', url:'https://www.kpmguscareers.com/students/' },
+  { id:'accenture-us', company:'Accenture US', region:'US', tier:'Global Generalist', scheme:'Internship + Graduate', window:'Opens late summer/early autumn; rolling', notes:'Very high volume hirer — good for building interview reps even outside strategy tracks.', url:'https://www.accenture.com/us-en/careers/local/university-careers' },
+  { id:'ow-us', company:'Oliver Wyman', region:'US', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens autumn for the following year\'s intake', notes:'Financial services and risk practice is especially strong in the US offices.', url:'https://www.oliverwyman.com/careers.html' },
+  { id:'kearney-us', company:'Kearney', region:'US', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Deep operations, procurement and supply-chain specialism.', url:'https://www.kearney.com/careers' },
+  { id:'lek-us', company:'L.E.K. Consulting', region:'US', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Healthcare and private-equity due-diligence work is a big share of US caseload.', url:'https://www.lek.com/careers' },
+  { id:'am-us', company:'Alvarez & Marsal', region:'US', tier:'Economic & Advisory', scheme:'Graduate scheme', window:'Opens autumn, rolling', notes:'Restructuring and turnaround focus — different interview style from classic MBB cases.', url:'https://www.alvarezandmarsal.com/careers' },
+  { id:'fti-us', company:'FTI Consulting', region:'US', tier:'Economic & Advisory', scheme:'Internship + Graduate', window:'Opens autumn, rolling', notes:'Litigation, forensic and corporate-finance advisory alongside strategy work.', url:'https://www.fticonsulting.com/careers' },
+  { id:'cra-us', company:'Charles River Associates (CRA)', region:'US', tier:'Economic & Advisory', scheme:'Internship + Graduate', window:'Opens autumn (~Sept)', notes:'Economic consulting — expect quantitative and antitrust-flavoured case questions.', url:'https://www.crai.com/careers/' },
+  { id:'cornerstone-us', company:'Cornerstone Research', region:'US', tier:'Economic & Advisory', scheme:'Internship + Graduate', window:'Opens autumn (~Aug/Sept)', notes:'Litigation and expert-testimony support — strong analytical/economics bent.', url:'https://www.cornerstone.com/careers/' },
+  { id:'ag-us', company:'Analysis Group', region:'US', tier:'Economic & Advisory', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Similar profile to CRA/Cornerstone — economic and financial consulting.', url:'https://www.analysisgroup.com/careers/' },
+
+  // ---------------- Middle East ----------------
+  { id:'mck-me', company:'McKinsey & Company', region:'Middle East', tier:'MBB', scheme:'Internship + Graduate (Business Analyst)', window:'Applications generally open mid-year; recent Business Analyst deadlines have landed in early August', notes:'Offices in Dubai, Abu Dhabi, Riyadh, Doha and Kuwait — apply to the specific office you want.', url:'https://www.mckinsey.com/careers' },
+  { id:'bcg-me', company:'Boston Consulting Group', region:'Middle East', tier:'MBB', scheme:'Internship + Graduate', window:'Applications generally open mid-year, closing around October', notes:'Dubai and Riyadh are the largest regional hubs.', url:'https://careers.bcg.com' },
+  { id:'bain-me', company:'Bain & Company', region:'Middle East', tier:'MBB', scheme:'Internship + Graduate', window:'Applications generally open mid-year, closing around late October', notes:'Riyadh has overtaken Dubai as the largest entry-level hiring market in the region.', url:'https://www.bain.com/careers/' },
+  { id:'strategyand-me', company:'Strategy& (PwC)', region:'Middle East', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Rolling; applications generally open mid-year', notes:'The longest-established global strategy firm in the region — first opened in Abu Dhabi in 1993.', url:'https://www.strategyand.pwc.com/m1/en/careers.html' },
+  { id:'pwc-me', company:'PwC Middle East', region:'Middle East', tier:'Big Four & Strategy Arms', scheme:'Internship + Graduate', window:'Opens mid-year, rolling', notes:'Separate track from Strategy& — this is PwC\'s core assurance/advisory graduate programme.', url:'https://www.pwc.com/m1/en/careers.html' },
+  { id:'deloitte-me', company:'Deloitte Middle East', region:'Middle East', tier:'Big Four & Strategy Arms', scheme:'Internship + Graduate', window:'Opens mid-year, rolling', notes:'Large government and public-sector transformation practice across the GCC.', url:'https://www2.deloitte.com/xe/en/careers.html' },
+  { id:'ey-me', company:'EY Middle East', region:'Middle East', tier:'Big Four & Strategy Arms', scheme:'Internship + Graduate', window:'Opens mid-year, rolling', notes:'Includes EY-Parthenon for strategy-specific roles.', url:'https://www.ey.com/en_me/careers' },
+  { id:'kpmg-me', company:'KPMG Middle East', region:'Middle East', tier:'Big Four & Strategy Arms', scheme:'Internship + Graduate', window:'Opens mid-year, rolling', notes:'Growing consulting practice tied closely to Vision 2030-linked projects in Saudi Arabia.', url:'https://home.kpmg/ae/en/home/careers.html' },
+  { id:'ow-me', company:'Oliver Wyman', region:'Middle East', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens mid-year', notes:'Smaller regional footprint than MBB, focused on financial services and government advisory.', url:'https://www.oliverwyman.com/careers.html' },
+  { id:'kearney-me', company:'Kearney', region:'Middle East', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens mid-year', notes:'One of the longest-standing foreign strategy firms in the Gulf, with roots dating to the 1970s.', url:'https://www.kearney.com/careers' },
+  { id:'rb-me', company:'Roland Berger', region:'Middle East', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens mid-year', notes:'Active across government-led diversification and industrials projects in the region.', url:'https://www.rolandberger.com/en/Careers/' },
+
+  // ---------------- UK — mid-market, high-street & sector specialists ----------------
+  { id:'pa-uk', company:'PA Consulting', region:'UK', tier:'Mid-Market & High-Street', scheme:'Graduate scheme (consulting, digital, engineering rotations)', window:'Opens autumn; recruits on a rolling basis', notes:'One of the UK\'s largest home-grown consultancies — broad rotational entry point across consulting, digital and technical tracks.', url:'https://www.paconsulting.com/careers/early-careers/uk-graduate-programmes' },
+  { id:'newton-uk', company:'Newton Europe', region:'UK', tier:'Mid-Market & High-Street', scheme:'Graduate scheme', window:'Opens autumn', notes:'Implementation-focused boutique (operations, digital, people & change) — known for hands-on delivery work and above-market graduate pay.', url:'https://www.newtoneurope.com/careers' },
+  { id:'gt-uk', company:'Grant Thornton UK', region:'UK', tier:'Mid-Market & High-Street', scheme:'Graduate scheme (advisory/consulting)', window:'Opens autumn, rolling', notes:'Mid-tier accounting network with a growing management-consulting advisory arm — more accessible entry point than the Big Four.', url:'https://www.grantthornton.co.uk/careers/' },
+  { id:'bdo-uk', company:'BDO UK', region:'UK', tier:'Mid-Market & High-Street', scheme:'Graduate scheme', window:'Opens autumn, rolling', notes:'Audit and advisory specialist with an expanding consulting practice; a solid "high-street" alternative to the Big Four.', url:'https://www.bdo.co.uk/en-gb/careers' },
+  { id:'rsm-uk', company:'RSM UK', region:'UK', tier:'Mid-Market & High-Street', scheme:'Graduate scheme', window:'Opens autumn, rolling', notes:'Formerly Baker Tilly UK — mid-market accounting and advisory network recruiting into consulting-adjacent roles.', url:'https://www.rsmuk.com/careers' },
+  { id:'grayce-uk', company:'Grayce', region:'UK', tier:'Mid-Market & High-Street', scheme:'Graduate development programme', window:'Opens autumn, rolling cohort intakes', notes:'Places graduates into change and transformation roles at FTSE 100/250 clients — a distinctive "consulting via secondment" model worth knowing about.', url:'https://www.grayce.co.uk/careers/' },
+  { id:'capco-uk', company:'Capco', region:'UK', tier:'Sector Specialist', scheme:'Graduate scheme + Internship', window:'Opens autumn', notes:'Financial-services-only consultancy — expect banking, payments and capital-markets case content.', url:'https://www.capco.com/careers' },
+  { id:'bearingpoint-uk', company:'BearingPoint', region:'UK', tier:'Strategy Boutique', scheme:'Graduate scheme + Internship', window:'Opens autumn', notes:'European heritage firm (spun out of KPMG Consulting) with strong public-sector and technology-transformation work.', url:'https://www.bearingpoint.com/en/careers/' },
+  { id:'analysysmason-uk', company:'Analysys Mason', region:'UK', tier:'Sector Specialist', scheme:'Graduate scheme + Internship', window:'Opens autumn', notes:'Telecoms, media and technology specialist — a strong pick if you want sector depth over generalist breadth.', url:'https://www.analysysmason.com/about-us/careers/' },
+  { id:'argon-uk', company:'Argon & Co', region:'UK', tier:'Strategy Boutique', scheme:'Graduate scheme + Internship', window:'Opens autumn', notes:'Operations and supply-chain specialist (formerly Crimson & Co, merged with France\'s Argon Consulting).', url:'https://www.argonandco.com/careers/' },
+  { id:'elixirr-uk', company:'Elixirr', region:'UK', tier:'Strategy Boutique', scheme:'Graduate scheme', window:'Opens autumn; smaller, rolling cohorts', notes:'Fast-growing, partner-led boutique — smaller intake than MBB but a genuinely strategic caseload.', url:'https://elixirr.com/careers/' },
+  { id:'gateone-uk', company:'Gate One', region:'UK', tier:'Strategy Boutique', scheme:'Graduate scheme', window:'Opens autumn', notes:'London-based transformation boutique, mid-sized graduate intake.', url:'https://www.gateone.co.uk/careers' },
+  { id:'sia-uk', company:'Sia Partners', region:'UK', tier:'Strategy Boutique', scheme:'Graduate scheme + Internship', window:'Opens autumn', notes:'French-origin firm with a growing UK practice and a distinctive AI-consulting angle.', url:'https://www.sia-partners.com/en/careers' },
+
+  // ---------------- US — mid-market, high-street & sector specialists ----------------
+  { id:'westmonroe-us', company:'West Monroe', region:'US', tier:'Mid-Market & High-Street', scheme:'Internship + Graduate', window:'Opens autumn (Sept–Nov)', notes:'Strong in technology and private-equity operational due diligence.', url:'https://www.westmonroe.com/careers' },
+  { id:'pointb-us', company:'Point B', region:'US', tier:'Mid-Market & High-Street', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Employee-owned consultancy, generalist project mix across strategy and execution.', url:'https://www.pointb.com/careers' },
+  { id:'slalom-us', company:'Slalom', region:'US', tier:'Mid-Market & High-Street', scheme:'Internship + Graduate', window:'Opens autumn, rolling', notes:'Technology- and customer-experience-led consulting with a large early-career intake.', url:'https://www.slalom.com/us/en/careers' },
+  { id:'guidehouse-us', company:'Guidehouse', region:'US', tier:'Mid-Market & High-Street', scheme:'Internship + Graduate', window:'Opens Sept–Nov', notes:'Strong public-sector and government practice; security-clearance-eligible roles available.', url:'https://guidehouse.com/careers/students' },
+  { id:'northhighland-us', company:'North Highland', region:'US', tier:'Mid-Market & High-Street', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Employee-owned transformation consultancy, Atlanta-headquartered with offices across the US and UK.', url:'https://careers.northhighland.com/' },
+  { id:'bakertilly-us', company:'Baker Tilly US', region:'US', tier:'Mid-Market & High-Street', scheme:'Graduate scheme + Internship', window:'Opens autumn, rolling', notes:'Mid-market accounting and advisory network with a growing consulting practice.', url:'https://www.bakertilly.com/careers' },
+  { id:'crowe-us', company:'Crowe', region:'US', tier:'Mid-Market & High-Street', scheme:'Graduate scheme + Internship', window:'Opens autumn, rolling', notes:'Mid-tier accounting and advisory firm — accessible entry point into consulting-adjacent work.', url:'https://www.crowe.com/careers' },
+  { id:'zs-us', company:'ZS Associates', region:'US', tier:'Sector Specialist', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Dominant name in pharma and healthcare consulting, heavily analytics-driven casework.', url:'https://www.zs.com/careers' },
+  { id:'huron-us', company:'Huron Consulting', region:'US', tier:'Sector Specialist', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Healthcare, education and financial-services specialist.', url:'https://www.huronconsultinggroup.com/careers' },
+  { id:'trinity-us', company:'Trinity Life Sciences', region:'US', tier:'Sector Specialist', scheme:'Internship + Graduate', window:'Opens autumn', notes:'Life-sciences-only strategy consultancy — good fit for biology/health-economics backgrounds.', url:'https://www.trinitylifesciences.com/careers/' },
+
+  // ---------------- Middle East — boutique & sector specialists ----------------
+  { id:'ftidelta-me', company:'FTI Delta (Delta Partners)', region:'Middle East', tier:'Sector Specialist', scheme:'Internship + Graduate', window:'Rolling', notes:'Telecoms, media and tech (TMT) specialist founded in Dubai in 2006 as Delta Partners, now FTI Consulting\'s dedicated TMT practice.', url:'https://www.fticonsulting.com/careers' },
+  { id:'vp-me', company:'Value Partners', region:'Middle East', tier:'Strategy Boutique', scheme:'Internship + Graduate', window:'Opens mid-year, rolling', notes:'Italian-origin strategy firm with a sizable Dubai and Riyadh presence.', url:'https://www.valuepartners.com/careers/' }
+];
+
+const REGIONS = ['All', 'UK', 'US', 'Middle East'];
+const TIERS = ['All', 'MBB', 'Big Four & Strategy Arms', 'Strategy Boutique', 'Mid-Market & High-Street', 'Sector Specialist', 'Global Generalist', 'Economic & Advisory'];
+const APP_STATUSES = ['Researching', 'Applied', 'Online Assessment', 'Case Interview / First Round', 'Final Round', 'Offer', 'Rejected', 'Withdrawn'];
+const STATUS_COLORS = {
+  'Researching': '#8a7a4e', 'Applied': '#c98a2b', 'Online Assessment': '#c98a2b',
+  'Case Interview / First Round': '#a83a2b', 'Final Round': '#a83a2b',
+  'Offer': '#3f6f62', 'Rejected': '#6b6b6b', 'Withdrawn': '#6b6b6b'
+};
+
+async function loadTrackerData(){
+  const t = await storGet('app-tracker');
+  state.tracker.tracked = (t && t.tracked) ? t.tracked : {};
+}
+async function saveTrackerData(){
+  await storSet('app-tracker', { tracked: state.tracker.tracked });
+}
+
+function setTrackerFilter(key, val){
+  state.tracker[key] = val;
+  renderTracker();
+}
+
+async function setTrackedStatus(id, status){
+  if (!state.tracker.tracked[id]) state.tracker.tracked[id] = { status, notes:'', dateAdded: new Date().toISOString() };
+  else state.tracker.tracked[id].status = status;
+  state.tracker.tracked[id].updatedAt = new Date().toISOString();
+  await saveTrackerData();
+  renderTracker();
+}
+async function untrackCompany(id){
+  delete state.tracker.tracked[id];
+  await saveTrackerData();
+  renderTracker();
+}
+async function updateTrackedNotes(id, notes){
+  if (state.tracker.tracked[id]) state.tracker.tracked[id].notes = notes;
+  await saveTrackerData();
+}
+
+function renderTracker(){
+  const el = document.getElementById('view-tracker');
+  const tr = state.tracker;
+
+  const trackedIds = Object.keys(tr.tracked);
+  const statusCounts = {};
+  APP_STATUSES.forEach(s => statusCounts[s] = 0);
+  trackedIds.forEach(id => { const s = tr.tracked[id].status; if (statusCounts[s] !== undefined) statusCounts[s]++; });
+
+  const filtered = COMPANIES.filter(c => {
+    if (tr.regionFilter !== 'All' && c.region !== tr.regionFilter) return false;
+    if (tr.tierFilter !== 'All' && c.tier !== tr.tierFilter) return false;
+    if (tr.search && !(c.company.toLowerCase().includes(tr.search.toLowerCase()))) return false;
+    return true;
+  });
+
+  const regionChips = REGIONS.map(r => `<button class="chip ${tr.regionFilter===r?'selected':''}" onclick="setTrackerFilter('regionFilter','${r}')">${r}</button>`).join('');
+  const tierChips = TIERS.map(t => `<button class="chip ${tr.tierFilter===t?'selected':''}" onclick="setTrackerFilter('tierFilter','${t.replace(/'/g,"\\'")}')">${t}</button>`).join('');
+
+  const cards = filtered.map(c => {
+    const tracked = tr.tracked[c.id];
+    const statusOptions = APP_STATUSES.map(s => `<option value="${s}" ${tracked && tracked.status===s ? 'selected':''}>${s}</option>`).join('');
+    return `
+      <div class="tracker-card">
+        <div class="tracker-top">
+          <div>
+            <div style="font-weight:700;font-size:15px;">${escapeHtml(c.company)}</div>
+            <div class="tracker-meta">${escapeHtml(c.region)} · ${escapeHtml(c.tier)} · ${escapeHtml(c.scheme)}</div>
+          </div>
+          <a href="${c.url}" target="_blank" rel="noopener" class="btn btn-outline" style="padding:6px 12px;font-size:11px;text-decoration:none;">Careers page ↗</a>
+        </div>
+        <div style="font-size:13px;margin:10px 0 4px;"><b>Typical opening window:</b> ${escapeHtml(c.window)}</div>
+        <div style="font-size:12.5px;color:#5c4e2f;margin-bottom:10px;">${escapeHtml(c.notes)}</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <select class="status-select" onchange="setTrackedStatus('${c.id}', this.value)">
+            <option value="" ${!tracked?'selected':''} disabled>Track this programme…</option>
+            ${statusOptions}
+          </select>
+          ${tracked ? `<button class="btn btn-outline" style="padding:5px 10px;font-size:11px;" onclick="untrackCompany('${c.id}')">Remove</button>` : ''}
+        </div>
+        ${tracked ? `<textarea placeholder="Notes — contacts, referral, prep tasks…" rows="2" style="margin-top:8px;font-size:12.5px;" oninput="updateTrackedNotes('${c.id}', this.value)">${escapeHtml(tracked.notes||'')}</textarea>` : ''}
+      </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="eyebrow">Case File — Applications</div>
+    <h1 class="page-title">Application Tracker</h1>
+    <p class="page-desc">Every major consulting employer across the UK, US, and Middle East offering graduate roles or internships — with typical application-opening patterns so you can plan ahead, plus a tracker for your own pipeline.</p>
+
+    <div class="card" style="margin-bottom:20px;border-color:var(--stamp-red);">
+      <div style="font-family:var(--font-mono);font-size:11px;text-transform:uppercase;color:var(--stamp-red);margin-bottom:4px;">Before you plan around these dates</div>
+      <p style="font-size:12.5px;margin:0;">Opening windows below are typical seasonal patterns from recent recruiting cycles, not confirmed dates for the current year — firms shift their exact deadlines annually and many review on a rolling basis, so slots can fill before the stated deadline. Always confirm the current date on the official careers page linked on each card before you plan around it.</p>
+    </div>
+
+    <div class="grid grid-4" style="margin-bottom:24px;">
+      <div class="kpi"><div class="num">${trackedIds.length}</div><div class="lbl">Tracked programmes</div></div>
+      <div class="kpi"><div class="num">${statusCounts['Applied']+statusCounts['Online Assessment']+statusCounts['Case Interview / First Round']+statusCounts['Final Round']}</div><div class="lbl">In progress</div></div>
+      <div class="kpi"><div class="num">${statusCounts['Offer']}</div><div class="lbl">Offers</div></div>
+      <div class="kpi"><div class="num">${statusCounts['Researching']}</div><div class="lbl">Researching</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:22px;">
+      <label class="field-label">Search by company</label>
+      <input type="text" placeholder="e.g. McKinsey, Oliver Wyman…" value="${escapeHtml(tr.search)}" oninput="setTrackerFilter('search', this.value)" style="margin-bottom:14px;" />
+      <label class="field-label">Region</label>
+      <div class="region-filter-bar">${regionChips}</div>
+      <label class="field-label">Firm type</label>
+      <div class="region-filter-bar" style="margin-bottom:0;">${tierChips}</div>
+    </div>
+
+    ${cards || '<div class="empty-state card">No programmes match those filters.</div>'}
+  `;
+}
+
+/* =========================================================================
+   NAV / VIEW SWITCHING
+   ========================================================================= */
+function switchView(view){
+  state.view = view;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  if (view === 'dashboard') renderDashboard();
+  if (view === 'generate') renderGenerate();
+  if (view === 'practice') renderPractice();
+  if (view === 'portfolio') renderPortfolio();
+  if (view === 'mockinterview') renderMockInterview();
+  if (view === 'tracker') renderTracker();
+  if (view === 'library') renderLibrary();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function renderTopStats(){
+  document.getElementById('topCasesDone').textContent = state.portfolio.cases.length;
+  document.getElementById('topStreak').textContent = state.portfolio.streak || 0;
+}
+
+document.getElementById('tabNav').addEventListener('click', (e) => {
+  const btn = e.target.closest('.tab-btn');
+  if (btn) switchView(btn.dataset.view);
+});
+
+/* =========================================================================
+   INIT
+   ========================================================================= */
+async function init(){
+  await loadPortfolio();
+  await loadTrackerData();
+  renderTopStats();
+  renderDashboard();
+  renderGenerate();
+  renderPractice();
+  renderPortfolio();
+  renderMockInterview();
+  renderTracker();
+  renderLibrary();
+}
+init();
+</script>
+</body>
+</html>
